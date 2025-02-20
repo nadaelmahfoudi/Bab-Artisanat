@@ -1,4 +1,4 @@
-import { Controller, Post, Body } from '@nestjs/common';
+import { Controller, Post, Body, Param } from '@nestjs/common';
 import { AuthService } from './auth.service';
 
 @Controller('auth')
@@ -18,4 +18,19 @@ export class AuthController {
   ): Promise<{ token: string }> {
     return this.authService.login(email, password);
   }
+
+    // Request password reset
+    @Post('request-password-reset')
+    async requestPasswordReset(@Body('email') email: string): Promise<void> {
+      return this.authService.requestPasswordReset(email);
+    }
+  
+    // Reset password
+    @Post('reset-password/:token')
+    async resetPassword(
+      @Param('token') token: string,
+      @Body('newPassword') newPassword: string,
+    ): Promise<void> {
+      return this.authService.resetPassword(token, newPassword);
+    }
 }
