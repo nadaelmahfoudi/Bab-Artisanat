@@ -31,7 +31,6 @@ export class ProductsService {
     async create(createProductDto: CreateProductDto): Promise<{ message: string; product: Product }> {
         const { category } = createProductDto;
         
-        // Vérifie si la catégorie existe
         const categoryExists = await this.categoryModel.findById(category).exec();
         if (!categoryExists) {
             throw new NotFoundException('Catégorie non trouvée');
