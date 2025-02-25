@@ -36,6 +36,13 @@ const Navbar = () => {
                   </button>
                 </Link>
               </li>
+              <li>
+                <Link to="/dashboard">
+                  <button className="border border-stone-600 bg-stone-600 text-white hover:bg-opacity-90 py-1.5 px-4 rounded">
+                    Dashboard
+                  </button>
+                </Link>
+              </li>
             </ul>
           </div>
         </div>
