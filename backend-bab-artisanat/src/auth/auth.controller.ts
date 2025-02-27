@@ -1,5 +1,7 @@
 import { Controller, Post, Body, Param } from '@nestjs/common';
 import { AuthService } from './auth.service';
+import { BadRequestException } from '@nestjs/common';
+
 
 @Controller('auth')
 export class AuthController {
@@ -7,17 +9,22 @@ export class AuthController {
 
   @Post('register')
   async register(@Body() body: { name: string; email: string; password: string }) {
-    const { name, email, password } = body;
-    return this.authService.register(name, email, password);
+    try {
+      const { name, email, password } = body;
+      const result = await this.authService.register(name, email, password);
+      return { message: 'User registered successfully', token: result.token };
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
+  
 
   @Post('login')
-  async login(
-    @Body('email') email: string,
-    @Body('password') password: string,
-  ): Promise<{ token: string }> {
-    return this.authService.login(email, password);
+  async login(@Body() loginDto: { email: string; password: string }) {
+    const token = await this.authService.login(loginDto.email, loginDto.password);
+    return { token }; 
   }
+  
 
     // Request password reset
     @Post('request-password-reset')
