@@ -1,18 +1,20 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import * as express from 'express';
+import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-  
-  app.use('/uploads', express.static(join(__dirname, '..', 'uploads'))); 
-  app.enableCors({
-    origin: '*', 
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    allowedHeaders: 'Content-Type, Authorization',
-  });
+    const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
-  await app.listen(3000);
+    // Rendre le dossier uploads accessible publiquement
+    app.useStaticAssets(join(__dirname, '..', 'uploads'), { prefix: '/uploads' });
+
+    app.enableCors({
+        origin: '*',
+        methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+        allowedHeaders: 'Content-Type, Authorization',
+    });
+
+    await app.listen(3000);
 }
 bootstrap();

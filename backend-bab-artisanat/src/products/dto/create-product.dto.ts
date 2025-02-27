@@ -11,7 +11,7 @@ export class CreateProductDto {
 
     @IsArray()
     @ArrayNotEmpty()
-    @IsString({ each: true }) // Assure que chaque élément est une string
+    @IsString({ each: true }) 
     images: string[];
 
     @IsNumber()

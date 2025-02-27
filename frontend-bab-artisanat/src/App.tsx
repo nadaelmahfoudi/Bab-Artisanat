@@ -7,6 +7,7 @@ import RegisterPage from "./pages/Register";
 import DashboardPage from "./pages/DashboardPage";
 import ListProduct from "./pages/products/listProduct";
 import AddProduct from "./pages/products/addProduct";
+import EditProduct from "./pages/products/editProduct"; // <-- Import du composant d'édition
 
 export default function App() {
   return (
@@ -19,6 +20,7 @@ export default function App() {
         <Route path="/dashboard" element={<DashboardPage />} />
         <Route path="/products/list" element={<ListProduct />} />
         <Route path="/addProduct" element={<AddProduct />} />
+        <Route path="/products/edit/:id" element={<EditProduct />} />
       </Routes>
       <Footer />
     </Router>
