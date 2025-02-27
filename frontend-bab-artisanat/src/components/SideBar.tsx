@@ -12,7 +12,7 @@ const Sidebar = () => {
         <Link className="flex items-center gap-3 p-3 rounded-lg transition-all hover:bg-stone-500" to="/products/list">
           <FaBox className="text-xl" /> <span className="text-lg">Products</span>
         </Link>
-        <Link className="flex items-center gap-3 p-3 rounded-lg transition-all hover:bg-stone-500" to="/categories">
+        <Link className="flex items-center gap-3 p-3 rounded-lg transition-all hover:bg-stone-500" to="/categories/list">
           <FaList className="text-xl" /> <span className="text-lg">Categories</span>
         </Link>
         <Link className="flex items-center gap-3 p-3 rounded-lg transition-all hover:bg-stone-500" to="/users">
