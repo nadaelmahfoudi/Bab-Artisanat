@@ -32,14 +32,20 @@ const AddProduct = () => {
     };
     
     const handleImageChange = async (e) => {
-        const files = Array.from(e.target.files);
-        
-        const imageUrls = files.map(file => URL.createObjectURL(file)); // Pour prévisualisation
-        setPreviewImages(prev => [...prev, ...imageUrls]);
+        const file = e.target.files[0];
+        const formData = new FormData();
+        formData.append('file', file);
     
-        // Supposons que tu stockes les URLs après un upload
-        const uploadedImages = files.map(file => file.name); // ou l'URL après upload réel
-        setFormData({ ...formData, images: [...formData.images, ...uploadedImages] });
+        try {
+            const response = await axios.post('http://localhost:3000/products/upload', formData, {
+                headers: { 'Content-Type': 'multipart/form-data' }
+            });
+    
+            setPreviewImages(prev => [...prev, response.data.imageUrl]);
+            setFormData({ ...formData, images: [...formData.images, response.data.imageUrl] });
+        } catch (error) {
+            console.error('Erreur lors de l’upload', error);
+        }
     };
     
 
@@ -55,9 +61,7 @@ const AddProduct = () => {
                     headers: { 'Content-Type': 'application/json' }
                 }
             );
-    
-            alert(response.data.message);
-            navigate('/products');
+            navigate('/products/list');
         } catch (err) {
             setError(err.response?.data?.message || 'Une erreur est survenue');
         }
@@ -73,7 +77,7 @@ const AddProduct = () => {
                 <textarea name="description" placeholder="Description" value={formData.description} onChange={handleChange} className="w-full p-3 border rounded-lg" required></textarea>
                 
                 <label className="block text-gray-700 font-medium">Images</label>
-                <input type="file" name="images" multiple onChange={handleImageChange} className="hidden" id="file-upload" />
+                <input type="file" name="images" onChange={handleImageChange} className="hidden" id="file-upload" />
                 <label htmlFor="file-upload" className="cursor-pointer bg-gray-200 p-2 rounded-lg flex items-center justify-center text-gray-700 hover:bg-gray-300">
                     <FaUpload className="mr-2" /> Choisir des images
                 </label>
