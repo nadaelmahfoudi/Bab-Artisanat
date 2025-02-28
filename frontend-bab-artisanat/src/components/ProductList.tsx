@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const ProductList = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     axios.get("http://localhost:3000/products")
       .then((response) => {
-        setProducts(response.data.products); // Fetch product list
+        setProducts(response.data.products);
         setLoading(false);
       })
       .catch((error) => {
@@ -50,6 +52,14 @@ const ProductList = () => {
                 disabled={product.stock === 0}
               >
                 Add to Cart
+              </button>
+
+              {/* See Details Button */}
+              <button 
+                className="mt-2 px-4 py-2 bg-gray-800 hover:bg-gray-900 text-white rounded w-full"
+                onClick={() => navigate(`/product/${product._id}`)}
+              >
+                See Details
               </button>
             </div>
           ))}

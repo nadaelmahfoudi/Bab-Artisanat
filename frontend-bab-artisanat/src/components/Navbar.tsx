@@ -62,6 +62,13 @@ const Navbar = () => {
                     </Link>
                   </li>
                   <li>
+                    <Link to="/cart">
+                      <button className="border border-stone-600 bg-stone-600 text-white hover:bg-opacity-90 py-1.5 px-4 rounded">
+                        Cart
+                      </button>
+                    </Link>
+                  </li>
+                  <li>
                     <button
                       onClick={handleLogout}
                       className="border border-red-600 bg-red-600 text-white hover:bg-opacity-90 py-1.5 px-4 rounded"
