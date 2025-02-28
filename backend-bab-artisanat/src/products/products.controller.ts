@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Put, Param, Delete, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { Controller, Get, Post, Body, Put, Param, Delete, UseInterceptors, UploadedFile, BadRequestException } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
@@ -46,6 +46,10 @@ export class ProductsController {
         })
     }))
     uploadFile(@UploadedFile() file: any) {
+        if (!file) {
+            throw new BadRequestException('Aucune image téléchargée');
+        }
         return { imageUrl: `http://localhost:3000/uploads/${file.filename}` };
     }
+    
 }
