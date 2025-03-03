@@ -1,16 +1,33 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
 
 @Schema()
-export class Cart extends Document {
-  @Prop({ required: true })
-  user: string;
+export class CartItem {
+  @Prop({ type: Types.ObjectId, ref: 'Product', required: true })
+  productId: Types.ObjectId;
 
-  @Prop({
-    type: [{ productId: Types.ObjectId, quantity: Number, price: Number }],
-    default: [],
-  })
-  items: { productId: Types.ObjectId; quantity: number; price: number }[];
+  @Prop({ required: true })
+  name: string;
+
+  @Prop({ required: true })
+  image: string;
+
+  @Prop({ required: true })
+  price: number;
+
+  @Prop({ required: true })
+  quantity: number;
+}
+
+const CartItemSchema = SchemaFactory.createForClass(CartItem);
+
+@Schema()
+export class Cart extends Document {
+  @Prop({ type: Types.ObjectId, ref: 'User', required: true })
+  user: Types.ObjectId;
+
+  @Prop({ type: [CartItemSchema], default: [] })
+  items: CartItem[];
 
   @Prop({ default: 0 })
   total: number;

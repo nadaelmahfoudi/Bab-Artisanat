@@ -6,10 +6,13 @@ const ProductList = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [cart, setCart] = useState([]);
   const navigate = useNavigate();
+  const userId = localStorage.getItem("userId");
 
   useEffect(() => {
-    axios.get("http://localhost:3000/products")
+    axios
+      .get("http://localhost:3000/products")
       .then((response) => {
         setProducts(response.data.products);
         setLoading(false);
@@ -19,7 +22,41 @@ const ProductList = () => {
         setError("An error occurred while loading the products.");
         setLoading(false);
       });
-  }, []);
+
+    if (userId) {
+      fetchCart(); // Récupérer le panier au chargement si l'utilisateur est connecté
+    }
+  }, [userId]);
+
+  const fetchCart = async () => {
+    try {
+      const response = await axios.get(`http://localhost:3000/cart/${userId}`);
+      setCart(response.data.items);
+    } catch (error) {
+      console.error("Error fetching cart:", error);
+    }
+  };
+
+  const handleAddToCart = async (productId) => {
+    if (!userId) {
+      alert("Please log in to add items to your cart.");
+      return;
+    }
+
+    try {
+      await axios.post("http://localhost:3000/cart/add", {
+        userId,
+        productId,
+        quantity: 1,
+      });
+
+      alert("Product added to cart!");
+      fetchCart(); // Mettre à jour le panier après l'ajout
+    } catch (error) {
+      console.error("Error adding product to cart:", error);
+      alert("Failed to add product to cart.");
+    }
+  };
 
   if (loading) return <p className="text-center text-gray-600">Loading products...</p>;
   if (error) return <p className="text-center text-red-500">{error}</p>;
@@ -39,7 +76,7 @@ const ProductList = () => {
               </span>
 
               <img 
-                src={product.images && product.images.length > 0 ? product.images[0] : "https://via.placeholder.com/150"} 
+                src={product.images?.length > 0 ? product.images[0] : "https://via.placeholder.com/150"} 
                 alt={product.name} 
                 className="w-full h-40 object-cover rounded-md" 
                 onError={(e) => e.target.src = "https://via.placeholder.com/150"} 
@@ -48,7 +85,12 @@ const ProductList = () => {
               <p className="text-gray-600">{product.price} €</p>
 
               <button 
-                className={`mt-4 px-4 py-2 rounded ${product.stock > 0 ? "bg-blue-600 hover:bg-blue-700 text-white" : "bg-gray-400 cursor-not-allowed text-gray-700"}`}
+                onClick={() => handleAddToCart(product._id)}
+                className={`mt-4 px-4 py-2 rounded ${
+                  product.stock > 0 
+                    ? "bg-blue-600 hover:bg-blue-700 text-white" 
+                    : "bg-gray-400 cursor-not-allowed text-gray-700"
+                }`}
                 disabled={product.stock === 0}
               >
                 Add to Cart
