@@ -9,40 +9,36 @@ const Login = () => {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [error, setError] = useState(null);
 
-  // Gérer la saisie des champs
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
   };
 
-  // Gérer la soumission du formulaire
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
-  
+
     try {
       const response = await axios.post("http://localhost:3000/auth/login", formData);
-  
-      if (response.data.token) {
+
+      if (response.data.token && response.data.userId) {
         localStorage.setItem("token", response.data.token);
+        localStorage.setItem("userId", response.data.userId); // Store userId
         navigate("/dashboard");
       } else {
-        throw new Error("Token not received");
+        throw new Error("Invalid response from server");
       }
     } catch (err) {
       setError(err.response?.data?.message || "Login failed");
     }
   };
-  
 
   return (
     <section className="ezy__signup14 light flex items-center justify-center py-14 md:py-24 text-black bg-cover bg-right bg-no-repeat relative">
-      {/* Blurred background image */}
       <div
         className="absolute inset-0 bg-cover bg-right bg-no-repeat"
         style={{ backgroundImage: `url(${loginImage})`, filter: "blur(4px)", zIndex: "-1" }}
       ></div>
 
-      {/* Content Container */}
       <div className="container px-4 mx-auto relative z-10">
         <div className="flex justify-center">
           <div className="w-full md:w-2/3">
@@ -57,7 +53,6 @@ const Login = () => {
                   <div className="flex flex-col justify-center items-center text-center h-full p-2">
                     <h2 className="text-[26px] leading-none font-bold mb-2">LOGIN</h2>
 
-                    {/* Affichage des erreurs */}
                     {error && <p className="text-red-500">{error}</p>}
 
                     <form className="w-full mt-6" onSubmit={handleSubmit}>

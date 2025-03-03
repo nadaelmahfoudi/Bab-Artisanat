@@ -4,17 +4,23 @@ import { Link, useNavigate } from "react-router-dom";
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userId, setUserId] = useState<string | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
     const token = localStorage.getItem("token");
+    const storedUserId = localStorage.getItem("userId");
+
     setIsLoggedIn(!!token);
+    setUserId(storedUserId);
   }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem("token"); 
-    setIsLoggedIn(false); 
-    navigate("/"); 
+    localStorage.removeItem("token");
+    localStorage.removeItem("userId");
+    setIsLoggedIn(false);
+    setUserId(null);
+    navigate("/");
   };
 
   return (
@@ -22,7 +28,9 @@ const Navbar = () => {
       <nav>
         <div className="container px-4">
           <div className="flex justify-between items-center">
-            <a className="font-black text-amber-950 text-3xl pl-32" href="#">Bab-Artisanat</a>
+            <a className="font-black text-amber-950 text-3xl pl-32" href="#">
+              Bab-Artisanat
+            </a>
             <button
               className="block lg:hidden cursor-pointer h-10 z-20"
               type="button"
@@ -33,7 +41,9 @@ const Navbar = () => {
               <div className="h-0.5 w-7 bg-black dark:bg-white translate-y-2"></div>
             </button>
             <ul
-              className={`flex flex-col lg:flex-row justify-center items-center gap-6 lg:gap-2 absolute h-screen w-screen top-0 left-full lg:left-0 lg:relative lg:h-auto lg:w-auto bg-white dark:bg-[#0b1727] lg:bg-transparent transition-transform duration-300 ${isOpen ? 'left-0' : ''}`}
+              className={`flex flex-col lg:flex-row justify-center items-center gap-6 lg:gap-2 absolute h-screen w-screen top-0 left-full lg:left-0 lg:relative lg:h-auto lg:w-auto bg-white dark:bg-[#0b1727] lg:bg-transparent transition-transform duration-300 ${
+                isOpen ? "left-0" : ""
+              }`}
             >
               {!isLoggedIn ? (
                 <>
