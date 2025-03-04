@@ -15,6 +15,19 @@ const Cart: React.FC = () => {
   const [selectedItem, setSelectedItem] = useState<string | null>(null);
   const userId = localStorage.getItem("userId");
 
+  const handleCheckout = async () => {
+    if (!userId) return;
+  
+    try {
+      const response = await axios.post("http://localhost:3000/cart/checkout", { userId });
+      if (response.data.url) {
+        window.location.href = response.data.url; // Redirect to Stripe checkout
+      }
+    } catch (error) {
+      console.error("Error creating checkout session:", error);
+    }
+  };
+
   useEffect(() => {
     if (!userId) return;
 
@@ -111,6 +124,12 @@ const Cart: React.FC = () => {
         <p className="text-gray-500">Your cart is empty.</p>
       )}
       <div className="mt-4 text-lg font-semibold">Total: ${getTotalPrice()}</div>
+      <button 
+        onClick={handleCheckout} 
+        className="mt-4 px-4 py-2 bg-blue-500 text-white rounded">
+        Checkout
+      </button>
+
       
       {showModal && (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center">

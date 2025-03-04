@@ -11,6 +11,7 @@ import AddProduct from "./pages/products/addProduct";
 import EditProduct from "./pages/products/editProduct"; 
 import ListCategory from "./pages/categories/listCategory";
 import ProductDetail from "./pages/products/productDetail";
+import Success from "./components/Success";
 
 export default function App() {
   return (
@@ -27,6 +28,7 @@ export default function App() {
         <Route path="/categories/list" element={<ListCategory />} />
         <Route path="/product/:id" element={<ProductDetail />} />
         <Route path="/cart" element={<Cart />} />
+        <Route path="/success" element={<Success />} />
       </Routes>
       <Footer />
     </Router>

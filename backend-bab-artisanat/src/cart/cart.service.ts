@@ -2,14 +2,20 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { Cart } from '../schemas/cart.schema';
-import { Product } from '../schemas/product.schema'; // Import du modèle Product
+import { Product } from '../schemas/product.schema'; 
+import Stripe from 'stripe';
+import { ObjectId } from "mongodb"; 
+import * as dotenv from 'dotenv';
 
 @Injectable()
 export class CartService {
+  private stripe: Stripe;
   constructor(
     @InjectModel(Cart.name) private readonly cartModel: Model<Cart>,
     @InjectModel(Product.name) private readonly productModel: Model<Product>,
-  ) {}
+  )  {
+    this.stripe = new Stripe(process.env.STRIPE_SECRET_KEY, { apiVersion: '2023-10-16' as any, });
+  }
 
   // 🔹 Récupérer le panier d'un utilisateur
   async getCart(userId: string) {
@@ -117,9 +123,55 @@ export class CartService {
 
     return { message: 'Quantité mise à jour', cart };
   }
-
-  // 🔹 Calculer le total du panier
   private calculateTotal(cart: Cart): number {
     return cart.items.reduce((total, item) => total + item.price * item.quantity, 0);
   }
+
+  async createCheckoutSession(userId: string) {
+    // Vérifier si userId est valide
+    if (!ObjectId.isValid(userId)) {
+      console.error("❌ Invalid userId:", userId);
+      throw new Error("Invalid userId");
+    }
+  
+    const cart = await this.cartModel
+      .findOne({ user: new ObjectId(userId) }) 
+      .populate({
+        path: "items.productId",
+        select: "name price images",
+      });
+  
+    if (!cart || !cart.items || cart.items.length === 0) {
+      console.error("⚠️ Cart is empty or not found:", cart);
+      throw new Error("Cart is empty");
+    }
+  
+    const lineItems = cart.items.map((item) => {
+      const product = item.productId as any;
+      console.log("✅ Image URL sent to Stripe:", product.images?.length > 0 ? product.images[0] : "No image");
+  
+      return {
+        price_data: {
+          currency: "usd",
+          product_data: {
+            name: product.name,
+            images: product.images?.length > 0 ? [`http://localhost:3000/uploads/${product.images[0]}`] : ["https://via.placeholder.com/150"],
+          },
+          unit_amount: product.price * 100,
+        },
+        quantity: item.quantity,
+      };
+    });
+  
+    const session = await this.stripe.checkout.sessions.create({
+      payment_method_types: ["card"],
+      line_items: lineItems,
+      mode: "payment",
+      success_url: "http://localhost:5173/success", 
+      cancel_url: "http://localhost:5173/cart", 
+    });
+  
+    return { url: session.url };
+  }  
+  
 }
