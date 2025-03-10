@@ -12,6 +12,7 @@ import EditProduct from "./pages/products/editProduct";
 import ListCategory from "./pages/categories/listCategory";
 import ProductDetail from "./pages/products/productDetail";
 import Success from "./components/Success";
+import WishlistPage from "./pages/products/wishList";
 
 export default function App() {
   return (
@@ -29,6 +30,7 @@ export default function App() {
         <Route path="/product/:id" element={<ProductDetail />} />
         <Route path="/cart" element={<Cart />} />
         <Route path="/success" element={<Success />} />
+        <Route path="/wishlist" element={<WishlistPage />} />
       </Routes>
       <Footer />
     </Router>

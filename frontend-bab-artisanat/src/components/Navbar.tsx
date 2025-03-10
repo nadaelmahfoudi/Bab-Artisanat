@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { ShoppingCart, Heart, User, Menu, X } from "lucide-react";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -23,76 +24,166 @@ const Navbar = () => {
     navigate("/");
   };
 
+  const toggleMenu = () => {
+    setIsOpen(!isOpen);
+    // Prevent scrolling when menu is open
+    document.body.style.overflow = isOpen ? "auto" : "hidden";
+  };
+
+  // Close mobile menu when navigating
+  const closeMenu = () => {
+    if (isOpen) {
+      setIsOpen(false);
+      document.body.style.overflow = "auto";
+    }
+  };
+
   return (
-    <div className="ezy__nav2 light py-6 bg-stone-300 dark:bg-[#0b1727] text-zinc-900 dark:text-white relative">
-      <nav>
-        <div className="container px-4">
-          <div className="flex justify-between items-center">
-            <a className="font-black text-amber-950 text-3xl pl-32" href="#">
+    <header className="sticky top-0 z-50 w-full bg-amber-50 shadow-sm dark:bg-stone-900 text-stone-800 dark:text-amber-50">
+      <div className="container mx-auto px-4 py-4">
+        <div className="flex items-center justify-between">
+          {/* Logo */}
+          <Link to="/" className="flex items-center" onClick={closeMenu}>
+            <span className="font-serif font-bold text-2xl text-amber-900 dark:text-amber-400">
               Bab-Artisanat
-            </a>
-            <button
-              className="block lg:hidden cursor-pointer h-10 z-20"
-              type="button"
-              onClick={() => setIsOpen(!isOpen)}
-            >
-              <div className="h-0.5 w-7 bg-black dark:bg-white -translate-y-2"></div>
-              <div className="h-0.5 w-7 bg-black dark:bg-white"></div>
-              <div className="h-0.5 w-7 bg-black dark:bg-white translate-y-2"></div>
-            </button>
-            <ul
-              className={`flex flex-col lg:flex-row justify-center items-center gap-6 lg:gap-2 absolute h-screen w-screen top-0 left-full lg:left-0 lg:relative lg:h-auto lg:w-auto bg-white dark:bg-[#0b1727] lg:bg-transparent transition-transform duration-300 ${
-                isOpen ? "left-0" : ""
-              }`}
-            >
-              {!isLoggedIn ? (
-                <>
-                  <li>
-                    <Link to="/login">
-                      <button className="border border-stone-600 text-stone-600 hover:bg-stone-600 hover:text-white py-1.5 px-4 rounded">
-                        Login
-                      </button>
+            </span>
+          </Link>
+
+          {/* Navigation Links - Desktop */}
+          <nav className="hidden lg:flex items-center space-x-8">
+            <Link to="/" className="text-stone-700 hover:text-amber-800 dark:text-amber-100 dark:hover:text-amber-400 transition-colors">
+              Home
+            </Link>
+            <Link to="/products" className="text-stone-700 hover:text-amber-800 dark:text-amber-100 dark:hover:text-amber-400 transition-colors">
+              Products
+            </Link>
+            <Link to="/artisans" className="text-stone-700 hover:text-amber-800 dark:text-amber-100 dark:hover:text-amber-400 transition-colors">
+              Artisans
+            </Link>
+            <Link to="/about" className="text-stone-700 hover:text-amber-800 dark:text-amber-100 dark:hover:text-amber-400 transition-colors">
+              About
+            </Link>
+          </nav>
+
+          {/* Action Buttons */}
+          <div className="flex items-center space-x-4">
+            {isLoggedIn ? (
+              <>
+                <Link to="/wishlist" className="relative p-2 rounded-full hover:bg-amber-100 dark:hover:bg-stone-800 transition-colors" onClick={closeMenu}>
+                  <Heart size={22} className="text-stone-700 dark:text-amber-100" />
+                </Link>
+                <Link to="/cart" className="relative p-2 rounded-full hover:bg-amber-100 dark:hover:bg-stone-800 transition-colors" onClick={closeMenu}>
+                  <ShoppingCart size={22} className="text-stone-700 dark:text-amber-100" />
+                </Link>
+                <div className="hidden md:block">
+                  <div className="flex items-center space-x-3">
+                    <Link to="/dashboard" className="text-sm font-medium text-stone-700 hover:text-amber-800 dark:text-amber-100 dark:hover:text-amber-400 transition-colors">
+                      Dashboard
                     </Link>
-                  </li>
-                  <li>
-                    <Link to="/register">
-                      <button className="border border-stone-600 bg-stone-600 text-white hover:bg-opacity-90 py-1.5 px-4 rounded">
-                        Register
-                      </button>
-                    </Link>
-                  </li>
-                </>
-              ) : (
-                <>
-                  <li>
-                    <Link to="/dashboard">
-                      <button className="border border-stone-600 bg-stone-600 text-white hover:bg-opacity-90 py-1.5 px-4 rounded">
-                        Dashboard
-                      </button>
-                    </Link>
-                  </li>
-                  <li>
-                    <Link to="/cart">
-                      <button className="border border-stone-600 bg-stone-600 text-white hover:bg-opacity-90 py-1.5 px-4 rounded">
-                        Cart
-                      </button>
-                    </Link>
-                  </li>
-                  <li>
                     <button
                       onClick={handleLogout}
-                      className="border border-red-600 bg-red-600 text-white hover:bg-opacity-90 py-1.5 px-4 rounded"
+                      className="text-sm font-medium px-4 py-2 rounded-md bg-amber-600 text-white hover:bg-amber-700 transition-colors"
                     >
                       Logout
                     </button>
-                  </li>
-                </>
-              )}
-            </ul>
+                  </div>
+                </div>
+              </>
+            ) : (
+              <div className="hidden md:flex items-center space-x-3">
+                <Link to="/login" className="text-sm font-medium px-4 py-2 rounded-md border border-amber-600 text-amber-600 hover:bg-amber-50 dark:hover:bg-stone-800 transition-colors">
+                  Login
+                </Link>
+                <Link to="/register" className="text-sm font-medium px-4 py-2 rounded-md bg-amber-600 text-white hover:bg-amber-700 transition-colors">
+                  Register
+                </Link>
+              </div>
+            )}
+
+            {/* Mobile Menu Button */}
+            <button
+              onClick={toggleMenu}
+              className="p-2 rounded-md lg:hidden hover:bg-amber-100 dark:hover:bg-stone-800 transition-colors"
+              aria-label="Toggle menu"
+            >
+              {isOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
           </div>
         </div>
-      </nav>
-    </div>
+      </div>
+
+      {/* Mobile Menu */}
+      {isOpen && (
+        <div className="fixed inset-0 z-50 bg-white dark:bg-stone-900 pt-20 px-6 overflow-y-auto lg:hidden">
+          <nav className="flex flex-col space-y-6 text-lg">
+            <Link to="/" className="py-2 border-b border-stone-200 dark:border-stone-700" onClick={closeMenu}>
+              Home
+            </Link>
+            <Link to="/products" className="py-2 border-b border-stone-200 dark:border-stone-700" onClick={closeMenu}>
+              Products
+            </Link>
+            <Link to="/artisans" className="py-2 border-b border-stone-200 dark:border-stone-700" onClick={closeMenu}>
+              Artisans
+            </Link>
+            <Link to="/about" className="py-2 border-b border-stone-200 dark:border-stone-700" onClick={closeMenu}>
+              About
+            </Link>
+
+            {isLoggedIn ? (
+              <div className="flex flex-col space-y-4 pt-6">
+                <Link 
+                  to="/dashboard" 
+                  className="w-full py-3 text-center rounded-md border border-amber-600 text-amber-600 hover:bg-amber-50 dark:hover:bg-stone-800"
+                  onClick={closeMenu}
+                >
+                  Dashboard
+                </Link>
+                <Link 
+                  to="/wishlist" 
+                  className="w-full py-3 text-center rounded-md border border-amber-600 text-amber-600 hover:bg-amber-50 dark:hover:bg-stone-800"
+                  onClick={closeMenu}
+                >
+                  Wishlist
+                </Link>
+                <Link 
+                  to="/cart" 
+                  className="w-full py-3 text-center rounded-md border border-amber-600 text-amber-600 hover:bg-amber-50 dark:hover:bg-stone-800"
+                  onClick={closeMenu}
+                >
+                  Cart
+                </Link>
+                <button
+                  onClick={() => {
+                    handleLogout();
+                    closeMenu();
+                  }}
+                  className="w-full py-3 text-center rounded-md bg-amber-600 text-white hover:bg-amber-700"
+                >
+                  Logout
+                </button>
+              </div>
+            ) : (
+              <div className="flex flex-col space-y-4 pt-6">
+                <Link 
+                  to="/login" 
+                  className="w-full py-3 text-center rounded-md border border-amber-600 text-amber-600 hover:bg-amber-50 dark:hover:bg-stone-800"
+                  onClick={closeMenu}
+                >
+                  Login
+                </Link>
+                <Link 
+                  to="/register" 
+                  className="w-full py-3 text-center rounded-md bg-amber-600 text-white hover:bg-amber-700"
+                  onClick={closeMenu}
+                >
+                  Register
+                </Link>
+              </div>
+            )}
+          </nav>
+        </div>
+      )}
+    </header>
   );
 };
 
