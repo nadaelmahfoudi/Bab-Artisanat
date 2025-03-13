@@ -13,6 +13,8 @@ import ListCategory from "./pages/categories/listCategory";
 import ProductDetail from "./pages/products/productDetail";
 import Success from "./components/Success";
 import WishlistPage from "./pages/products/wishList";
+import AboutPage from "./pages/AboutPage";
+import ProductPage from "./pages/ProductPage";
 
 export default function App() {
   return (
@@ -21,6 +23,8 @@ export default function App() {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/about" element={<AboutPage />} />
+        <Route path="/products" element={<ProductPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/dashboard" element={<DashboardPage />} />
         <Route path="/products/list" element={<ListProduct />} />

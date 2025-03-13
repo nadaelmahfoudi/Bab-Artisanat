@@ -13,6 +13,7 @@ const ProductDetail = () => {
   const [isFavorite, setIsFavorite] = useState(false);
   const [activeTab, setActiveTab] = useState("description");
   const [userRating, setUserRating] = useState(0);
+  const [reviewText, setReviewText] = useState("");
   const userId = localStorage.getItem('userId');
 
   useEffect(() => {
@@ -21,28 +22,31 @@ const ProductDetail = () => {
     }
   }, [product]);
 
-  const handleRating = async (newRating) => {
+  const handleRatingAndReview = async (newRating, review) => {
     if (!userId) {
-      console.error("User is not logged in.");
+      alert("Veuillez vous connecter pour noter ce produit.");
       return;
     }
-
+  
     try {
       const response = await axios.post("http://localhost:3000/ratings/rate", {
         userId,
         productId: id,
         rating: newRating,
-        review: "Super produit !", // You can customize this based on user input
+        review: review || null, 
       });
-
+  
       if (response.status === 200) {
         setUserRating(newRating);
-        alert("Rating submitted successfully");
+        alert("Votre avis a été soumis avec succès !");
       }
     } catch (error) {
-      console.error("Error submitting rating:", error);
+      console.error("Erreur lors de l'envoi de la note :", error);
+      alert("Une erreur est survenue. Veuillez réessayer.");
     }
   };
+  
+
   useEffect(() => {
     if (!userId) return;
   
@@ -104,8 +108,6 @@ const ProductDetail = () => {
       alert("Please login to proceed with purchase");
       return;
     }
-    
-    // Add your checkout logic here
     alert("Redirecting to checkout...");
   };
 
@@ -342,22 +344,10 @@ const ProductDetail = () => {
                 Product Details
               </button>
               <button 
-                onClick={() => setActiveTab("artisan")} 
-                className={`px-6 py-4 font-medium text-sm whitespace-nowrap ${activeTab === "artisan" ? "text-amber-700 border-b-2 border-amber-600" : "text-stone-600 hover:text-amber-600"}`}
-              >
-                Artisan & Craft
-              </button>
-              <button 
                 onClick={() => setActiveTab("reviews")} 
                 className={`px-6 py-4 font-medium text-sm whitespace-nowrap ${activeTab === "reviews" ? "text-amber-700 border-b-2 border-amber-600" : "text-stone-600 hover:text-amber-600"}`}
               >
                 Reviews (12)
-              </button>
-              <button 
-                onClick={() => setActiveTab("shipping")} 
-                className={`px-6 py-4 font-medium text-sm whitespace-nowrap ${activeTab === "shipping" ? "text-amber-700 border-b-2 border-amber-600" : "text-stone-600 hover:text-amber-600"}`}
-              >
-                Shipping & Returns
               </button>
             </div>
           </div>
@@ -383,39 +373,6 @@ const ProductDetail = () => {
                         <span className="w-2/3 text-stone-800">{value}</span>
                       </div>
                     ))}
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {activeTab === "artisan" && (
-              <div>
-                <div className="md:flex gap-8">
-                  <div className="md:w-1/4 mb-6 md:mb-0">
-                    <div className="rounded-lg overflow-hidden mb-4">
-                      <img src="/api/placeholder/300/300" alt="Artisan" className="w-full h-auto" />
-                    </div>
-                    <h3 className="text-lg font-medium text-stone-800">{productDetails.artisan}</h3>
-                    <p className="text-stone-500">{productDetails.region}, Morocco</p>
-                  </div>
-                  <div className="md:w-3/4">
-                    <h3 className="text-xl font-medium text-stone-800 mb-4">About the Artisan</h3>
-                    <p className="text-stone-700 mb-4">
-                      {productDetails.artisan} is a master craftsman who has dedicated over 30 years to perfecting the art of traditional Moroccan pottery. Working from his workshop in {productDetails.region}, he creates pieces that honor centuries-old techniques while introducing subtle contemporary elements.
-                    </p>
-                    <p className="text-stone-700 mb-6">
-                      Each piece is meticulously handcrafted using locally sourced clay and natural pigments. The distinctive patterns are applied by hand, making every item truly one-of-a-kind.
-                    </p>
-                    
-                    <h3 className="text-xl font-medium text-stone-800 mb-4">The Craft Process</h3>
-                    <ol className="list-decimal list-inside space-y-2 text-stone-700 mb-6">
-                      <li>Clay is hand-selected and prepared using traditional methods</li>
-                      <li>Each piece is shaped on a manual pottery wheel</li>
-                      <li>Items are left to dry naturally for several days</li>
-                      <li>Designs are sketched and then hand-painted using natural pigments</li>
-                      <li>Pieces undergo traditional firing methods</li>
-                      <li>Final quality inspection ensures perfection</li>
-                    </ol>
                   </div>
                 </div>
               </div>
@@ -466,6 +423,31 @@ const ProductDetail = () => {
                       Write a Review
                     </button>
                   </div>
+                  <div className="mt-6">
+                  <h3 className="text-lg font-semibold text-stone-700">Donnez votre avis</h3>
+                  <div className="flex items-center gap-2 mt-2">
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <Star
+                        key={star}
+                        size={24}
+                        className={star <= userRating ? "text-amber-500 fill-amber-500" : "text-stone-300"}
+                        onClick={() => handleRatingAndReview(star, reviewText)}
+                      />
+                    ))}
+                  </div>
+                  <textarea
+                    className="w-full mt-2 p-2 border rounded-lg"
+                    placeholder="Laissez un commentaire..."
+                    value={reviewText}
+                    onChange={(e) => setReviewText(e.target.value)}
+                  ></textarea>
+                  <button 
+                    className="mt-2 px-4 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700"
+                    onClick={() => handleRatingAndReview(userRating, reviewText)}
+                  >
+                    Soumettre
+                  </button>
+                </div>
                   
                   <div className="md:w-2/3">
                     <h3 className="text-xl font-medium text-stone-800 mb-4">Customer Reviews</h3>
@@ -498,42 +480,6 @@ const ProductDetail = () => {
                       Load More Reviews
                     </button>
                   </div>
-                </div>
-              </div>
-            )}
-
-            {activeTab === "shipping" && (
-              <div className="space-y-6 text-stone-700">
-                <div>
-                  <h3 className="text-lg font-medium text-stone-800 mb-3">Shipping Information</h3>
-                  <p className="mb-2">
-                    We take special care in packaging our handcrafted items to ensure they reach you safely.
-                  </p>
-                  <ul className="list-disc list-inside space-y-1 mb-4 pl-4">
-                    <li>All items are securely packaged with sustainable materials</li>
-                    <li>Standard shipping: 7-14 business days (international)</li>
-                    <li>Express shipping: 3-5 business days (where available)</li>
-                    <li>Free shipping on orders over 1000 MAD</li>
-                  </ul>
-                  <p>
-                    Tracking information will be provided via email once your order ships.
-                  </p>
-                </div>
-                
-                <div>
-                  <h3 className="text-lg font-medium text-stone-800 mb-3">Return Policy</h3>
-                  <p className="mb-2">
-                    We stand behind our products and want you to be completely satisfied with your purchase.
-                  </p>
-                  <ul className="list-disc list-inside space-y-1 mb-4 pl-4">
-                    <li>30-day return period for unused items in original packaging</li>
-                    <li>Damaged items should be reported within 48 hours of delivery</li>
-                    <li>Custom or personalized items cannot be returned unless damaged</li>
-                    <li>Return shipping costs are the responsibility of the customer</li>
-                  </ul>
-                  <p>
-                    Please contact our customer service at support@bab-artisanat.com to initiate a return.
-                  </p>
                 </div>
               </div>
             )}
