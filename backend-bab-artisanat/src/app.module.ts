@@ -6,6 +6,9 @@ import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { ProductsModule } from './products/products.module';
 import { CategoriesModule } from './categories/categories.module';
+import { CartModule } from './cart/cart.module';
+import { FavoritesModule } from './favorites/favorites.module';
+import { RatingModule } from './rating/rating.module';
 
 @Module({
   imports: [
@@ -14,7 +17,10 @@ import { CategoriesModule } from './categories/categories.module';
     UserModule,
     AuthModule,
     ProductsModule,
-    CategoriesModule
+    CategoriesModule,
+    CartModule,
+    FavoritesModule,
+    RatingModule
   ],
   controllers: [AppController],
   providers: [AppService],

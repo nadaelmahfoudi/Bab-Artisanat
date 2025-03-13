@@ -35,26 +35,23 @@ export class AuthService {
     return { token };
   }
 
-  async login(email: string, password: string): Promise<{ token: string }> {
-    // Find user by email
+  async login(email: string, password: string): Promise<{ token: string, userId: string }> {
     const user = await this.userModel.findOne({ email });
     if (!user) {
       throw new UnauthorizedException('Invalid email or password');
     }
-
-    // Check if the provided password matches the stored hashed password
+  
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
       throw new UnauthorizedException('Invalid email or password');
     }
-
-    // Generate JWT payload and token
+  
     const payload = { sub: user._id, email: user.email };
     const token = this.jwtService.sign(payload);
-
-    return { token };
+  
+    return { token, userId: user._id.toString() };  
   }
-
+  
   async requestPasswordReset(email: string): Promise<void> {
     const user = await this.userModel.findOne({ email });
     if (!user) {

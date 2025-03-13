@@ -41,7 +41,7 @@ const EditProduct = () => {
                     stock: product.stock || "",
                     category: product.category?._id || ""
                 });
-                setPreviewImages(product.images?.map(img => `/uploads/${img}`) || []);
+                setPreviewImages(product.images || []);
             })
             .catch(error => console.error("Erreur de chargement du produit", error));
     }, [id]);

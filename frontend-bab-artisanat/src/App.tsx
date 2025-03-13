@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import HomePage from "./pages/HomePage";
 import Footer from "./components/Footer";
+import Cart from "./components/Cart";
 import LoginPage from "./pages/Login"; 
 import RegisterPage from "./pages/Register"; 
 import DashboardPage from "./pages/DashboardPage";
@@ -9,6 +10,11 @@ import ListProduct from "./pages/products/listProduct";
 import AddProduct from "./pages/products/addProduct";
 import EditProduct from "./pages/products/editProduct"; 
 import ListCategory from "./pages/categories/listCategory";
+import ProductDetail from "./pages/products/productDetail";
+import Success from "./components/Success";
+import WishlistPage from "./pages/products/wishList";
+import AboutPage from "./pages/AboutPage";
+import ProductPage from "./pages/ProductPage";
 
 export default function App() {
   return (
@@ -17,12 +23,18 @@ export default function App() {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/about" element={<AboutPage />} />
+        <Route path="/products" element={<ProductPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/dashboard" element={<DashboardPage />} />
         <Route path="/products/list" element={<ListProduct />} />
         <Route path="/addProduct" element={<AddProduct />} />
         <Route path="/products/edit/:id" element={<EditProduct />} />
         <Route path="/categories/list" element={<ListCategory />} />
+        <Route path="/product/:id" element={<ProductDetail />} />
+        <Route path="/cart" element={<Cart />} />
+        <Route path="/success" element={<Success />} />
+        <Route path="/wishlist" element={<WishlistPage />} />
       </Routes>
       <Footer />
     </Router>
