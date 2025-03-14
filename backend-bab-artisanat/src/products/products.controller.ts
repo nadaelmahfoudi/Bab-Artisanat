@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Put, Param, Delete, UseInterceptors, UploadedFile, BadRequestException } from '@nestjs/common';
+import { Controller, Get, Post, Body, Put, Param, Delete, UseInterceptors, UploadedFile, BadRequestException, Query, NotFoundException } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
@@ -9,6 +9,16 @@ import { UpdateProductDto } from './dto/update-product.dto';
 @Controller('products')
 export class ProductsController {
     constructor(private readonly productsService: ProductsService) {}
+
+    @Get('user')
+    async getProductsByUser(@Query('userId') userId: string) {
+      if (!userId) {
+        throw new NotFoundException('UserId requis');
+      }    
+      const products = await this.productsService.findProductsByUser(userId);
+      console.log('Products found for userId', userId, products); 
+      return { message: 'Produits récupérés avec succès', products };
+    }
 
     @Get()
     async findAll() {

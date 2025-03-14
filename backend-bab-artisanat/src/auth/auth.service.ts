@@ -1,4 +1,4 @@
-import { Injectable, BadRequestException, UnauthorizedException  } from '@nestjs/common';
+import { Injectable, BadRequestException, UnauthorizedException, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import * as bcrypt from 'bcryptjs';
@@ -98,5 +98,12 @@ export class AuthService {
 
     // Save updated user
     await user.save();
+  }
+
+  async findUserById(userId: string): Promise<User | null> {
+    if (!userId.match(/^[0-9a-fA-F]{24}$/)) {
+      throw new NotFoundException('ID utilisateur invalide');
+    }
+    return this.userModel.findById(userId).select('-password').exec(); 
   }
 }

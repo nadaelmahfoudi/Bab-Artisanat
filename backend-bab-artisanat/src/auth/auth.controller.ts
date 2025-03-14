@@ -1,6 +1,6 @@
-import { Controller, Post, Body, Param } from '@nestjs/common';
+import { Controller, Post, Body, Param, Get } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { BadRequestException } from '@nestjs/common';
+import { BadRequestException, NotFoundException } from '@nestjs/common';
 
 
 @Controller('auth')
@@ -39,5 +39,14 @@ export class AuthController {
       @Body('newPassword') newPassword: string,
     ): Promise<void> {
       return this.authService.resetPassword(token, newPassword);
+    }
+
+    @Get(':userId')
+    async getUserById(@Param('userId') userId: string) {
+      const user = await this.authService.findUserById(userId);
+      if (!user) {
+        throw new NotFoundException('Utilisateur non trouvé');
+      }
+      return { message: 'Utilisateur récupéré avec succès', user };
     }
 }

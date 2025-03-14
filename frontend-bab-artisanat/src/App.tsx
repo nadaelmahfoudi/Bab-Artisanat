@@ -15,6 +15,7 @@ import Success from "./components/Success";
 import WishlistPage from "./pages/products/wishList";
 import AboutPage from "./pages/AboutPage";
 import ProductPage from "./pages/ProductPage";
+import BoutiquePage from "./pages/BoutiquePage";
 
 export default function App() {
   return (
@@ -35,6 +36,7 @@ export default function App() {
         <Route path="/cart" element={<Cart />} />
         <Route path="/success" element={<Success />} />
         <Route path="/wishlist" element={<WishlistPage />} />
+        <Route path="/boutique" element={<BoutiquePage />} />
       </Routes>
       <Footer />
     </Router>
