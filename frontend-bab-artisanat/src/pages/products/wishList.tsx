@@ -103,7 +103,7 @@ const WishlistPage = () => {
         </header>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {favorites.map((fav) => (
+        {favorites.filter(fav => fav.product).map((fav) => (
             <div 
               key={fav._id} 
               className="group bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 border border-amber-100"
@@ -111,17 +111,11 @@ const WishlistPage = () => {
               onMouseLeave={() => setHoverProductId(null)}
             >
               <div className="relative h-64 overflow-hidden">
-                <img 
-                  src={fav.product.images?.[0] || "/api/placeholder/400/320"} 
-                  alt={fav.product.name} 
-                  className={`w-full h-full object-cover transition-transform duration-700 ${
-                    hoverProductId === fav._id ? "scale-110" : "scale-100"
-                  }`}
-                  onError={(e) => {
-                    const target = e.target;
-                    target.src = "/api/placeholder/400/320";
-                  }}
-                />
+              <img 
+  src={fav.product?.images?.[0] || "/api/placeholder/400/320"} 
+  alt={fav.product?.name || "Unknown product"} 
+/>
+
                 
                 <button 
                   onClick={() => handleRemoveFavorite(fav._id)} 

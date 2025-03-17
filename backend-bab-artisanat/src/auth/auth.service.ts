@@ -5,6 +5,7 @@ import * as bcrypt from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
 import { User } from '../schemas/user.schema';
 import { MailerService } from '@nestjs-modules/mailer';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class AuthService {
@@ -106,4 +107,12 @@ export class AuthService {
     }
     return this.userModel.findById(userId).select('-password').exec(); 
   }
+
+  async updateUser(userId: string, updateUserDto: UpdateUserDto): Promise<User> {
+    const user = await this.userModel.findByIdAndUpdate(userId, updateUserDto, { new: true }).exec();
+    if (!user) {
+        throw new NotFoundException('Utilisateur non trouvé');
+    }
+    return user;
+}
 }

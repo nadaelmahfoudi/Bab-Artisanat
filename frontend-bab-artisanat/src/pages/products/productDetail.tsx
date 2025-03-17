@@ -54,15 +54,31 @@ const ProductDetail = () => {
       try {
         setLoading(true);
         const response = await axios.get(`http://localhost:3000/products/${id}`);
-        setProduct(response.data.product);
-        setSelectedImage(response.data.product.images[0]);
-  
+        console.log("API Response:", response.data); // Log the response
+    
+        // Check if the response contains the expected data
+        if (!response.data || !response.data.product) {
+          setError("Product data not found in the response");
+          return;
+        }
+    
+        const productData = response.data.product; // Access the product data directly
+        if (!productData) {
+          setError("Product not found");
+          return;
+        }
+    
+        setProduct(productData);
+        setSelectedImage(productData.images[0]);
+    
         // Check if product is in favorites
         const favResponse = await axios.get(`http://localhost:3000/favorites/${userId}`);
         const favorites = favResponse.data.favorites;
-  
-        setIsFavorite(favorites.some(fav => fav.product._id === id));
+    
+        // Ensure fav.product is not null before accessing its _id property
+        setIsFavorite(favorites.some(fav => fav.product && fav.product._id === id));
       } catch (err) {
+        console.error("Error fetching product details:", err); // Log the error
         setError("Failed to fetch product details. Please try again later.");
       } finally {
         setLoading(false);

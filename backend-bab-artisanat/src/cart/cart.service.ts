@@ -148,8 +148,14 @@ export class CartService {
   
     const lineItems = cart.items.map((item) => {
       const product = item.productId as any;
+    
+      if (!product) {
+        console.error("❌ Product is null or undefined for item:", item);
+        throw new Error("Product not found");
+      }
+    
       console.log("✅ Image URL sent to Stripe:", product.images?.length > 0 ? product.images[0] : "No image");
-  
+    
       return {
         price_data: {
           currency: "usd",
@@ -162,6 +168,7 @@ export class CartService {
         quantity: item.quantity,
       };
     });
+    
   
     const session = await this.stripe.checkout.sessions.create({
       payment_method_types: ["card"],

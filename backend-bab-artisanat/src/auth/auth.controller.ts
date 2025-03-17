@@ -1,6 +1,7 @@
-import { Controller, Post, Body, Param, Get } from '@nestjs/common';
+import { Controller, Post, Body, Param, Get, Put } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { BadRequestException, NotFoundException } from '@nestjs/common';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 
 @Controller('auth')
@@ -49,4 +50,10 @@ export class AuthController {
       }
       return { message: 'Utilisateur récupéré avec succès', user };
     }
+
+    @Put(':id')
+    async updateUser(@Param('id') userId: string, @Body() updateUserDto: UpdateUserDto) {
+        return this.authService.updateUser(userId, updateUserDto);
+    }
+
 }
