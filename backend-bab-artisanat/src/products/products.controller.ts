@@ -16,7 +16,6 @@ export class ProductsController {
         throw new NotFoundException('UserId requis');
       }    
       const products = await this.productsService.findProductsByUser(userId);
-      console.log('Products found for userId', userId, products); 
       return { message: 'Produits récupérés avec succès', products };
     }
 

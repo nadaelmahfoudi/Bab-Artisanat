@@ -96,7 +96,11 @@ export class ProductsService {
     }
 
     async findProductsByUser(userId: string) {
-        const products = await this.productModel.find({ userId }).exec();
+        const products = await this.productModel
+            .find({ userId })
+            .populate('category', 'name') 
+            .exec();
         return products;
-    }    
+    }
+    
 }
