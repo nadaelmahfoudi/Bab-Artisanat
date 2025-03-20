@@ -9,6 +9,7 @@ import { CategoriesModule } from './categories/categories.module';
 import { CartModule } from './cart/cart.module';
 import { FavoritesModule } from './favorites/favorites.module';
 import { ReviewModule } from './rating/review.module';
+import { NotificationModule } from './notifications/notifications.module';
 
 @Module({
   imports: [
@@ -20,7 +21,8 @@ import { ReviewModule } from './rating/review.module';
     CategoriesModule,
     CartModule,
     FavoritesModule,
-    ReviewModule
+    ReviewModule,
+    NotificationModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -1,10 +1,28 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { FaBox, FaList, FaUsers, FaChartBar } from "react-icons/fa";
+import { FaBox, FaList, FaUsers, FaChartBar, FaBell } from "react-icons/fa";
 
 const Sidebar = () => {
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
+  
+  // Check for unread notifications in localStorage
+  useEffect(() => {
+    const checkUnreadNotifications = () => {
+      const count = localStorage.getItem('unreadNotifications');
+      setUnreadCount(count ? parseInt(count) : 0);
+    };
+    
+    // Check on mount
+    checkUnreadNotifications();
+    
+    // Set up an interval to check regularly
+    const intervalId = setInterval(checkUnreadNotifications, 3000);
+    
+    // Clean up interval
+    return () => clearInterval(intervalId);
+  }, []);
 
   const isActive = (path) => {
     return location.pathname === path;
@@ -14,11 +32,17 @@ const Sidebar = () => {
     { path: "/", label: "Home", icon: <FaChartBar /> },
     { path: "/products/list", label: "Products", icon: <FaBox /> },
     { path: "/categories/list", label: "Categories", icon: <FaList /> },
+    { 
+      path: "/notification", 
+      label: "Notifications", 
+      icon: <FaBell />,
+      badge: unreadCount > 0 ? unreadCount : null
+    },
     { path: "/users", label: "Users", icon: <FaUsers /> }
   ];
 
   return (
-    <div 
+    <div
       className={`${collapsed ? 'w-20' : 'w-72'} h-screen bg-gradient-to-b from-amber-700 to-amber-900 text-white flex flex-col shadow-xl transition-all duration-300 ease-in-out`}
     >
       {/* Header */}
@@ -26,7 +50,7 @@ const Sidebar = () => {
         {!collapsed && (
           <h2 className="text-2xl font-bold text-amber-50 tracking-wide">Dashboard</h2>
         )}
-        <button 
+        <button
           onClick={() => setCollapsed(!collapsed)}
           className="p-2 rounded-lg hover:bg-amber-800 transition-colors text-amber-200"
         >
@@ -55,13 +79,29 @@ const Sidebar = () => {
                     : 'text-amber-100 hover:bg-amber-800/40 hover:text-white'
                 }`}
               >
-                <div className={`text-xl ${isActive(item.path) ? 'text-amber-200' : ''}`}>
-                  {item.icon}
+                <div className="relative">
+                  <div className={`text-xl ${isActive(item.path) ? 'text-amber-200' : ''}`}>
+                    {item.icon}
+                  </div>
+                  {item.badge && (
+                    <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                      {item.badge > 99 ? '99+' : item.badge}
+                    </span>
+                  )}
                 </div>
+                
                 {!collapsed && (
-                  <span className={`ml-3 font-medium ${isActive(item.path) ? 'text-amber-50' : ''}`}>
-                    {item.label}
-                  </span>
+                  <div className="ml-3 flex flex-1 items-center justify-between">
+                    <span className={`font-medium ${isActive(item.path) ? 'text-amber-50' : ''}`}>
+                      {item.label}
+                    </span>
+                    
+                    {item.badge && (
+                      <span className="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full min-w-[20px] text-center">
+                        {item.badge > 99 ? '99+' : item.badge}
+                      </span>
+                    )}
+                  </div>
                 )}
               </Link>
             </li>

@@ -5,6 +5,7 @@ import { Cart } from '../schemas/cart.schema';
 import { Product } from '../schemas/product.schema'; 
 import Stripe from 'stripe';
 import { ObjectId } from "mongodb"; 
+import { NotificationService } from '../notifications/notifications.service';
 import * as dotenv from 'dotenv';
 
 @Injectable()
@@ -13,6 +14,7 @@ export class CartService {
   constructor(
     @InjectModel(Cart.name) private readonly cartModel: Model<Cart>,
     @InjectModel(Product.name) private readonly productModel: Model<Product>,
+    private readonly notificationService: NotificationService,
   )  {
     this.stripe = new Stripe(process.env.STRIPE_SECRET_KEY, { apiVersion: '2023-10-16' as any, });
   }
@@ -138,7 +140,7 @@ export class CartService {
       .findOne({ user: new ObjectId(userId) }) 
       .populate({
         path: "items.productId",
-        select: "name price images",
+        select: "name price images userId",
       });
   
     if (!cart || !cart.items || cart.items.length === 0) {
@@ -148,6 +150,7 @@ export class CartService {
   
     const lineItems = cart.items.map((item) => {
       const product = item.productId as any;
+      console.log("🔍 Vérification product.userId :", product?.userId);
     
       if (!product) {
         console.error("❌ Product is null or undefined for item:", item);
@@ -168,7 +171,6 @@ export class CartService {
         quantity: item.quantity,
       };
     });
-    
   
     const session = await this.stripe.checkout.sessions.create({
       payment_method_types: ["card"],
@@ -178,7 +180,18 @@ export class CartService {
       cancel_url: "http://localhost:5173/cart", 
     });
   
+    // Send notification to each product owner
+    for (const item of cart.items) {
+      const product = item.productId as any;
+      if (product?.userId) {
+        await this.notificationService.createNotification(
+          product.userId.toString(),
+          `🎉 Un client a acheté votre produit "${product.name}"`
+        );
+      }
+    }
+  
     return { url: session.url };
-  }  
+  }
   
 }
