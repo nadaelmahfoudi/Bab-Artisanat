@@ -7,6 +7,8 @@ const WishlistPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [hoverProductId, setHoverProductId] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [productToDelete, setProductToDelete] = useState(null); 
   const userId = localStorage.getItem("userId");
 
   useEffect(() => {
@@ -30,13 +32,36 @@ const WishlistPage = () => {
     fetchFavorites();
   }, [userId]);
 
-  const handleRemoveFavorite = async (favoriteId) => {
-    try {
-      await axios.delete(`http://localhost:3000/favorites/${favoriteId}`);
-      setFavorites(favorites.filter(fav => fav._id !== favoriteId));
-    } catch (err) {
-      console.error("Failed to remove from wishlist:", err);
-    }
+  const handleRemoveFavorite = (productId) => {
+    setProductToDelete(productId); 
+    setIsModalOpen(true); 
+  };
+
+  const ConfirmDeleteModal = ({ isOpen, onClose, onConfirm }) => {
+    if (!isOpen) return null;
+
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
+        <div className="bg-white p-8 rounded-lg shadow-md max-w-md text-center">
+          <h3 className="text-xl font-serif text-amber-900 mb-4">Are you sure?</h3>
+          <p className="text-amber-700 mb-6">Do you really want to remove this item from your wishlist?</p>
+          <div className="flex justify-center gap-4">
+            <button
+              onClick={onClose}
+              className="px-4 py-2 bg-gray-300 hover:bg-gray-400 text-gray-800 rounded-md transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={onConfirm}
+              className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-md transition-colors"
+            >
+              Remove
+            </button>
+          </div>
+        </div>
+      </div>
+    );
   };
 
   if (loading) {
@@ -103,7 +128,7 @@ const WishlistPage = () => {
         </header>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {favorites.filter(fav => fav.product).map((fav) => (
+          {favorites.filter(fav => fav.product).map((fav) => (
             <div 
               key={fav._id} 
               className="group bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 border border-amber-100"
@@ -111,14 +136,13 @@ const WishlistPage = () => {
               onMouseLeave={() => setHoverProductId(null)}
             >
               <div className="relative h-64 overflow-hidden">
-              <img 
-  src={fav.product?.images?.[0] || "/api/placeholder/400/320"} 
-  alt={fav.product?.name || "Unknown product"} 
-/>
-
+                <img 
+                  src={fav.product?.images?.[0] || "/api/placeholder/400/320"} 
+                  alt={fav.product?.name || "Unknown product"} 
+                />
                 
                 <button 
-                  onClick={() => handleRemoveFavorite(fav._id)} 
+                  onClick={() => handleRemoveFavorite(fav.product._id)}
                   className="absolute top-3 right-3 bg-white bg-opacity-90 text-red-500 hover:text-red-700 p-2 rounded-full shadow-sm transition-colors"
                   aria-label="Remove from wishlist"
                 >
@@ -163,6 +187,21 @@ const WishlistPage = () => {
           ))}
         </div>
       </div>
+
+      <ConfirmDeleteModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onConfirm={async () => {
+          try {
+            await axios.delete(`http://localhost:3000/favorites/remove/${userId}/${productToDelete}`);
+            setFavorites(favorites.filter(fav => fav.product._id !== productToDelete)); 
+          } catch (err) {
+            console.error("Failed to remove from wishlist:", err);
+          } finally {
+            setIsModalOpen(false);
+          }
+        }}
+      />
     </section>
   );
 };

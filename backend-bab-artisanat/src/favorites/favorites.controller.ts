@@ -11,10 +11,9 @@ export class FavoritesController {
     return this.favoritesService.addFavorite(body.userId, body.productId);
   }
 
-  @Delete('remove')
-  async removeFavorite(@Body() body: { userId: string; productId: string }) {
-    if (!body.userId || !body.productId) throw new BadRequestException('userId and productId are required');
-    return this.favoritesService.removeFavorite(body.userId, body.productId);
+  @Delete('remove/:userId/:productId')
+  async removeFavorite(@Param('userId') userId: string, @Param('productId') productId: string) {
+    return this.favoritesService.removeFavorite(userId, productId);
   }
 
   @Get(':userId')
