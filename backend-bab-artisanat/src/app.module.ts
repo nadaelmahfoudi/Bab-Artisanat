@@ -8,7 +8,8 @@ import { ProductsModule } from './products/products.module';
 import { CategoriesModule } from './categories/categories.module';
 import { CartModule } from './cart/cart.module';
 import { FavoritesModule } from './favorites/favorites.module';
-import { RatingModule } from './rating/rating.module';
+import { ReviewModule } from './rating/review.module';
+import { NotificationModule } from './notifications/notifications.module';
 
 @Module({
   imports: [
@@ -20,7 +21,8 @@ import { RatingModule } from './rating/rating.module';
     CategoriesModule,
     CartModule,
     FavoritesModule,
-    RatingModule
+    ReviewModule,
+    NotificationModule,
   ],
   controllers: [AppController],
   providers: [AppService],

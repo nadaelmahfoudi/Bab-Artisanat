@@ -15,6 +15,8 @@ import Success from "./components/Success";
 import WishlistPage from "./pages/products/wishList";
 import AboutPage from "./pages/AboutPage";
 import ProductPage from "./pages/ProductPage";
+import BoutiquePage from "./pages/BoutiquePage";
+import NotificationPage from "./pages/NotificationPage";
 
 export default function App() {
   return (
@@ -29,12 +31,14 @@ export default function App() {
         <Route path="/dashboard" element={<DashboardPage />} />
         <Route path="/products/list" element={<ListProduct />} />
         <Route path="/addProduct" element={<AddProduct />} />
+        <Route path="/notification" element={<NotificationPage />} />
         <Route path="/products/edit/:id" element={<EditProduct />} />
         <Route path="/categories/list" element={<ListCategory />} />
         <Route path="/product/:id" element={<ProductDetail />} />
         <Route path="/cart" element={<Cart />} />
         <Route path="/success" element={<Success />} />
         <Route path="/wishlist" element={<WishlistPage />} />
+        <Route path="/boutique" element={<BoutiquePage />} />
       </Routes>
       <Footer />
     </Router>

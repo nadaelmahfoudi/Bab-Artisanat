@@ -21,6 +21,9 @@ export class Product extends Document {
 
     @Prop({ type: Types.ObjectId, ref: 'Category', required: true })
     category: Types.ObjectId;
+
+    @Prop({ type: Types.ObjectId, ref: 'User', required: true })
+    userId: Types.ObjectId;
 }
 
 export const ProductSchema = SchemaFactory.createForClass(Product);

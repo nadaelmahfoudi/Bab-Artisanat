@@ -60,6 +60,9 @@ const Navbar = () => {
             <Link to="/artisans" className="text-stone-700 hover:text-amber-800 dark:text-amber-100 dark:hover:text-amber-400 transition-colors">
               Artisans
             </Link>
+            <Link to="/boutique" className="py-2 border-b border-stone-200 dark:border-stone-700" onClick={closeMenu}>
+              Boutique
+            </Link>
             <Link to="/about" className="text-stone-700 hover:text-amber-800 dark:text-amber-100 dark:hover:text-amber-400 transition-colors">
               About
             </Link>
@@ -124,6 +127,9 @@ const Navbar = () => {
             </Link>
             <Link to="/artisans" className="py-2 border-b border-stone-200 dark:border-stone-700" onClick={closeMenu}>
               Artisans
+            </Link>
+            <Link to="/boutique" className="py-2 border-b border-stone-200 dark:border-stone-700" onClick={closeMenu}>
+              Boutique
             </Link>
             <Link to="/about" className="py-2 border-b border-stone-200 dark:border-stone-700" onClick={closeMenu}>
               About

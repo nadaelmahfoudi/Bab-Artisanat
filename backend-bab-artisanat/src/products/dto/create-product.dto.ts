@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty, IsArray, IsNumber, IsMongoId, ArrayNotEmpty } from 'class-validator';
+import { IsString, IsNotEmpty, IsNumber, IsMongoId, IsArray } from 'class-validator';
 
 export class CreateProductDto {
     @IsString()
@@ -10,16 +10,22 @@ export class CreateProductDto {
     description: string;
 
     @IsArray()
-    @ArrayNotEmpty()
-    @IsString({ each: true }) 
+    @IsNotEmpty()
     images: string[];
 
     @IsNumber()
+    @IsNotEmpty()
     price: number;
 
     @IsNumber()
+    @IsNotEmpty()
     stock: number;
 
     @IsMongoId()
+    @IsNotEmpty()
     category: string;
+
+    @IsMongoId()
+    @IsNotEmpty()
+    userId: string;  
 }

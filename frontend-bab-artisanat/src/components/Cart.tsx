@@ -20,16 +20,31 @@ const ArtisanalCart: React.FC = () => {
   const userId = localStorage.getItem("userId");
 
   const handleCheckout = async () => {
-    if (!userId) return;
-  
+    if (!userId) {
+      setError("Please log in to proceed with checkout.");
+      return;
+    }
+
+    if (cartItems.length === 0) {
+      setError("Your cart is empty. Add items to proceed with checkout.");
+      return;
+    }
+
     try {
       setIsLoading(true);
+      console.log("Sending checkout request with userId:", userId); // Log the userId
       const response = await axios.post("http://localhost:3000/cart/checkout", { userId });
       if (response.data.url) {
         window.location.href = response.data.url; // Redirect to Stripe checkout
       }
     } catch (error) {
-      setError("Unable to process checkout. Please try again later.");
+      if (error.response) {
+        // Backend returned an error response
+        setError(error.response.data.error || "Unable to process checkout. Please try again later.");
+      } else {
+        // Network or other errors
+        setError("Unable to process checkout. Please try again later.");
+      }
       console.error("Error creating checkout session:", error);
     } finally {
       setIsLoading(false);
@@ -46,7 +61,11 @@ const ArtisanalCart: React.FC = () => {
       try {
         setIsLoading(true);
         const response = await axios.get(`http://localhost:3000/cart/${userId}`);
-        setCartItems(response.data.items.map((item: any) => ({
+        
+        // Filter out items where productId is null
+        const validItems = response.data.items.filter((item: any) => item.productId !== null);
+        
+        setCartItems(validItems.map((item: any) => ({
           id: item.productId._id,
           name: item.productId.name,
           price: item.productId.price,
@@ -55,6 +74,7 @@ const ArtisanalCart: React.FC = () => {
           artisan: item.productId.artisan || "Local Artisan",
           material: item.productId.material
         })));
+        
         setError(null);
       } catch (error) {
         setError("Could not load your cart. Please refresh the page.");

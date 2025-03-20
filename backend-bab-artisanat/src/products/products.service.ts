@@ -1,9 +1,9 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { Product } from '../schemas/product.schema';
 import { Category } from '../schemas/category.schema';
-import { Rating } from '../schemas/rating.schema';
+import { Review } from '../schemas/review.schema';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 
@@ -12,23 +12,13 @@ export class ProductsService {
     constructor(
       @InjectModel(Product.name) private productModel: Model<Product>, 
       @InjectModel(Category.name) private categoryModel: Model<Category>,
-      @InjectModel(Rating.name) private ratingModel: Model<Rating>
+      @InjectModel(Review.name) private reviewModel: Model<Review>
     ) {}
 
     async findAll(): Promise<{ message: string; products: Product[] }> {
         const products = await this.productModel.find().populate('category').exec();
         return { message: 'Liste des produits récupérée avec succès', products };
     }
-    
-    // async findOne(id: string): Promise<{ message: string; product: Product }> {
-    //     if (!id.match(/^[0-9a-fA-F]{24}$/)) {
-    //         throw new BadRequestException('ID invalide');
-    //     }
-    //     const product = await this.productModel.findById(id).populate('category').exec();
-    //     if (!product) throw new NotFoundException('Produit non trouvé');
-    //     return { message: 'Produit récupéré avec succès', product };
-    // }
-    
 
     async create(createProductDto: CreateProductDto): Promise<{ message: string; product: Product }> {
         const { category } = createProductDto;
@@ -42,7 +32,6 @@ export class ProductsService {
         const savedProduct = await newProduct.save();
         return { message: 'Produit créé avec succès', product: savedProduct };
     }
-
 
     async update(id: string, updateProductDto: UpdateProductDto): Promise<{ message: string; product: Product }> {
         if (!id.match(/^[0-9a-fA-F]{24}$/)) {
@@ -61,7 +50,7 @@ export class ProductsService {
     
         return { message: 'Produit mis à jour avec succès', product: updatedProduct };
     }
-    
+
     async remove(id: string): Promise<{ message: string }> {
         if (!id.match(/^[0-9a-fA-F]{24}$/)) {
             throw new BadRequestException('ID invalide');
@@ -71,8 +60,7 @@ export class ProductsService {
         return { message: 'Produit supprimé avec succès' };
     }
 
-
-    async findOne(id: string): Promise<{ message: string; product: Product, averageRating: number }> {
+    async findOne(id: string): Promise<{ message: string; product: Product; reviews: Review[] }> {
         if (!id.match(/^[0-9a-fA-F]{24}$/)) {
           throw new BadRequestException('ID invalide');
         }
@@ -80,30 +68,17 @@ export class ProductsService {
         const product = await this.productModel.findById(id).populate('category').exec();
         if (!product) throw new NotFoundException('Produit non trouvé');
         
-        const averageRating = await this.getAverageRating(id);
-        return { message: 'Produit récupéré avec succès', product, averageRating };
-      }
+        const reviews = await this.reviewModel.find({ productId: id }).exec();
+        return { message: 'Produit récupéré avec succès', product, reviews };
+    }
+
+
+    async findProductsByUser(userId: string) {
+        const products = await this.productModel
+            .find({ userId })
+            .populate('category', 'name') 
+            .exec();
+        return products;
+    }
     
-      async addRating(userId: string, productId: string, rating: number, review?: string): Promise<{ message: string, averageRating: number }> {
-        if (rating < 1 || rating > 5) {
-          throw new BadRequestException('La note doit être entre 1 et 5');
-        }
-    
-        const product = await this.productModel.findById(productId);
-        if (!product) throw new NotFoundException('Produit non trouvé');
-    
-        const newRating = new this.ratingModel({ userId, productId, rating, review });
-        await newRating.save();
-    
-        const averageRating = await this.getAverageRating(productId);
-        return { message: 'Évaluation ajoutée avec succès', averageRating };
-      }
-    
-      async getAverageRating(productId: string): Promise<number> {
-        const ratings = await this.ratingModel.find({ productId }).exec();
-        if (ratings.length === 0) return 0; 
-    
-        const totalRating = ratings.reduce((sum, rating) => sum + rating.rating, 0);
-        return totalRating / ratings.length;
-      }
 }

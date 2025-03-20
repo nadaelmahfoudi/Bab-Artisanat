@@ -4,41 +4,46 @@ import { useNavigate } from 'react-router-dom';
 import { FaUpload } from 'react-icons/fa';
 
 const AddProduct = () => {
+    const navigate = useNavigate();
+
+    // Récupérer userId depuis localStorage
+    const userId = localStorage.getItem('userId');
+
     const [formData, setFormData] = useState({
         name: '',
         description: '',
         images: [],
         price: '',
         stock: '',
-        category: ''
+        category: '',
+        userId: userId || '' // Ajouter userId ici
     });
+
     const [previewImages, setPreviewImages] = useState([]);
     const [categories, setCategories] = useState([]);
     const [error, setError] = useState(null);
-    const navigate = useNavigate();
 
+    // Charger les catégories au montage du composant
     useEffect(() => {
         axios.get('http://localhost:3000/categories')
-            .then(response => {
-                console.log("Données des catégories reçues :", response.data);
-                setCategories(response.data.categories);
-            })
+            .then(response => setCategories(response.data.categories))
             .catch(err => console.error("Erreur lors du chargement des catégories", err));
-    }, []); 
-    
+    }, []);
+
+    // Mettre à jour les champs du formulaire
     const handleChange = (e) => {
         setFormData(prevState => ({
             ...prevState,
             [e.target.name]: e.target.value
         }));
-        console.log(`Champ mis à jour : ${e.target.name} -> ${e.target.value}`);
     };
-    
+
+    // Gestion de l'upload d'images
     const handleImageChange = async (e) => {
         const file = e.target.files[0];
         if (!file) return;
 
-        const imageFormData = new FormData(); // Ne pas écraser formData global
+        const imageFormData = new FormData();
         imageFormData.append('file', file);
     
         try {
@@ -51,17 +56,23 @@ const AddProduct = () => {
             setPreviewImages(prev => [...prev, imageUrl]);
             setFormData(prevState => ({
                 ...prevState,
-                images: [...prevState.images, imageUrl] // Ajout correct de l'image
+                images: [...prevState.images, imageUrl]
             }));
         } catch (error) {
             console.error('Erreur lors de l’upload', error);
         }
     };
 
+    // Envoyer le produit avec userId
     const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log("Données envoyées :", formData);
-    
+
+        // Vérifier si userId est bien défini
+        if (!formData.userId) {
+            setError("Erreur : userId manquant. Veuillez vous reconnecter.");
+            return;
+        }
+
         try {
             await axios.post('http://localhost:3000/products', formData, {
                 headers: { 'Content-Type': 'application/json' }
