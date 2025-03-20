@@ -1,19 +1,16 @@
 import { useState, useEffect } from "react";
+import axios from "axios";
 import { Link } from "react-router-dom";
 import headerImage from "../assets/Zelij1.png";
 import ProductList from "../components/ProductList";
 import { ChevronRight, Star, MapPin, Eye } from "lucide-react";
+import Literature from "../assets/Book store at the medina marrakesh.jfif";
+import Tanning from "../assets/Tanning leather in Fes, Morocco.png";
+import Weaving from "../assets/weaving.png";
+import Zelij from "../assets/Zelij craftsman.png";
 
 const HomePage = () => {
-  const [categories, setCategories] = useState([
-    { id: 1, name: "Pottery", icon: "🏺", count: 28 },
-    { id: 2, name: "Carpets", icon: "🧶", count: 45 },
-    { id: 3, name: "Zelij", icon: "🔷", count: 36 },
-    { id: 4, name: "Leather", icon: "👝", count: 22 },
-    { id: 5, name: "Woodwork", icon: "🪑", count: 31 },
-    { id: 6, name: "Metal Work", icon: "⚒️", count: 19 }
-  ]);
-
+  const [categories, setCategories] = useState([]);
   const [featuredArtisans, setFeaturedArtisans] = useState([
     {
       id: 1,
@@ -41,6 +38,19 @@ const HomePage = () => {
     }
   ]);
 
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await axios.get('http://localhost:3000/categories');
+        setCategories(response.data.categories); 
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      }
+    };
+  
+    fetchCategories();
+  }, []);
+  
   return (
     <div className="bg-amber-50 text-stone-800">
       {/* Hero Section */}
@@ -214,16 +224,16 @@ const HomePage = () => {
             </div>
             <div className="lg:w-1/2 grid grid-cols-2 gap-4">
               <div className="aspect-square bg-amber-500 rounded-lg overflow-hidden">
-                <img src="/api/placeholder/400/400" alt="Moroccan pottery" className="w-full h-full object-cover" />
+                <img src={Literature} alt="Moroccan pottery" className="w-full h-full object-cover" />
               </div>
               <div className="aspect-square bg-amber-500 rounded-lg overflow-hidden">
-                <img src="/api/placeholder/400/400" alt="Moroccan carpet weaving" className="w-full h-full object-cover" />
+                <img src={Weaving} alt="Moroccan carpet weaving" className="w-full h-full object-cover" />
               </div>
               <div className="aspect-square bg-amber-500 rounded-lg overflow-hidden">
-                <img src="/api/placeholder/400/400" alt="Zelij craftsman" className="w-full h-full object-cover" />
+                <img src={Zelij} alt="Zelij craftsman" className="w-full h-full object-cover" />
               </div>
               <div className="aspect-square bg-amber-500 rounded-lg overflow-hidden">
-                <img src="/api/placeholder/400/400" alt="Leather tanning" className="w-full h-full object-cover" />
+                <img src={Tanning} alt="Leather tanning" className="w-full h-full object-cover" />
               </div>
             </div>
           </div>
