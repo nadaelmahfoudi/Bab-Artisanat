@@ -32,14 +32,13 @@ const ArtisanalCart: React.FC = () => {
 
     try {
       setIsLoading(true);
-      console.log("Sending checkout request with userId:", userId); // Log the userId
+      console.log("Sending checkout request with userId:", userId); 
       const response = await axios.post("http://localhost:3000/cart/checkout", { userId });
       if (response.data.url) {
-        window.location.href = response.data.url; // Redirect to Stripe checkout
+        window.location.href = response.data.url; 
       }
     } catch (error) {
       if (error.response) {
-        // Backend returned an error response
         setError(error.response.data.error || "Unable to process checkout. Please try again later.");
       } else {
         // Network or other errors
@@ -62,10 +61,9 @@ const ArtisanalCart: React.FC = () => {
         setIsLoading(true);
         const response = await axios.get(`http://localhost:3000/cart/${userId}`);
         
-        // Filter out items where productId is null
-        const validItems = response.data.items.filter((item: any) => item.productId !== null);
+        const validItems = response.data.items.filter((item: any) => item.productId !== null && item.productId !== undefined);
         
-        setCartItems(validItems.map((item: any) => ({
+        const mappedItems = validItems.map((item: any) => ({
           id: item.productId._id,
           name: item.productId.name,
           price: item.productId.price,
@@ -73,8 +71,9 @@ const ArtisanalCart: React.FC = () => {
           image: item.productId.images[0],
           artisan: item.productId.artisan || "Local Artisan",
           material: item.productId.material
-        })));
-        
+        }));
+
+        setCartItems(mappedItems);
         setError(null);
       } catch (error) {
         setError("Could not load your cart. Please refresh the page.");
