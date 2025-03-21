@@ -14,6 +14,8 @@ const ProductDetail = () => {
   const [activeTab, setActiveTab] = useState("description");
   const [reviewText, setReviewText] = useState("");
   const [reviews, setReviews] = useState([]);
+  const [cartSuccessMessage, setCartSuccessMessage] = useState("");
+  const [reviewSuccessMessage, setReviewSuccessMessage] = useState("");
   const userId = localStorage.getItem('userId');
 
   useEffect(() => {
@@ -73,10 +75,9 @@ const ProductDetail = () => {
     
     try {
       if (isFavorite) {
-        await axios.delete(`http://localhost:3000/favorites/remove`, {
-          data: { userId, productId: id }
-        });
+        await axios.delete(`http://localhost:3000/favorites/remove/${userId}/${id}`);
       } else {
+        // Use POST with request body
         await axios.post(`http://localhost:3000/favorites/add`, { userId, productId: id });
       }
       setIsFavorite(!isFavorite);
@@ -91,15 +92,19 @@ const ProductDetail = () => {
       return;
     }
     
-    alert(`Added ${quantity} item(s) to cart`);
-  };
+    try {
+      await axios.post("http://localhost:3000/cart/add", {
+        userId,
+        productId: id,
+        quantity: quantity,
+      });
 
-  const buyNow = () => {
-    if (!userId) {
-      alert("Please login to proceed with purchase");
-      return;
+      setCartSuccessMessage(`Added ${quantity} item(s) to cart`);
+      setTimeout(() => setCartSuccessMessage(""), 3000); 
+    } catch (error) {
+      console.error("Error adding product to cart:", error);
+      alert("We couldn't add this item to your cart. Please try again.");
     }
-    alert("Redirecting to checkout...");
   };
 
   const handleReviewSubmit = async () => {
@@ -116,8 +121,9 @@ const ProductDetail = () => {
       });
   
       if (response.status === 200) {
-        setReviewText("");
-        alert("Votre avis a été soumis avec succès !");
+        setReviewText(""); 
+        setReviewSuccessMessage("Review sent successfully!"); 
+        setTimeout(() => setReviewSuccessMessage(""), 3000); 
         const updatedReviews = await axios.get(`http://localhost:3000/reviews/${id}`);
         setReviews(updatedReviews.data);
       }
@@ -169,17 +175,6 @@ const ProductDetail = () => {
       </div>
     );
   }
-
-  // Define productDetails dynamically based on the product data
-  const productDetails = {
-    artisan: product?.artisan || "Unknown Artisan",
-    region: product?.region || "Unknown Region",
-    material: product?.material || "Unknown Material",
-    dimensions: product?.dimensions || "Unknown Dimensions",
-    weight: product?.weight || "Unknown Weight",
-    technique: product?.technique || "Unknown Technique",
-    careInstructions: product?.careInstructions || "No care instructions provided.",
-  };
 
   return (
     <div className="bg-amber-50">
@@ -283,15 +278,15 @@ const ProductDetail = () => {
                 </div>
               </div>
 
+              {/* Cart Success Message */}
+              {cartSuccessMessage && (
+                <div className="mb-4 p-3 bg-green-100 text-green-800 rounded-lg">
+                  {cartSuccessMessage}
+                </div>
+              )}
+
               <div className="space-y-4 mb-8">
                 <div className="flex flex-col sm:flex-row gap-3">
-                  <button
-                    onClick={buyNow}
-                    disabled={product.stock <= 0}
-                    className={`flex-1 py-3 px-6 rounded-lg font-medium text-white flex items-center justify-center ${product.stock > 0 ? 'bg-amber-600 hover:bg-amber-700' : 'bg-stone-400 cursor-not-allowed'} transition-colors`}
-                  >
-                    Buy Now
-                  </button>
                   <button
                     onClick={addToCart}
                     disabled={product.stock <= 0}
@@ -334,16 +329,10 @@ const ProductDetail = () => {
           </div>
         </div>
 
-        {/* Product Details Tabs */}
+        {/* Reviews Section */}
         <div className="mt-12 bg-white rounded-xl shadow-sm overflow-hidden">
           <div className="border-b border-stone-200">
             <div className="flex overflow-x-auto">
-              <button 
-                onClick={() => setActiveTab("description")} 
-                className={`px-6 py-4 font-medium text-sm whitespace-nowrap ${activeTab === "description" ? "text-amber-700 border-b-2 border-amber-600" : "text-stone-600 hover:text-amber-600"}`}
-              >
-                Product Details
-              </button>
               <button 
                 onClick={() => setActiveTab("reviews")} 
                 className={`px-6 py-4 font-medium text-sm whitespace-nowrap ${activeTab === "reviews" ? "text-amber-700 border-b-2 border-amber-600" : "text-stone-600 hover:text-amber-600"}`}
@@ -354,134 +343,91 @@ const ProductDetail = () => {
           </div>
 
           <div className="p-6 md:p-8">
-            {activeTab === "description" && (
-              <div>
-                <div className="prose max-w-none text-stone-700">
-                  <p className="mb-4">
-                    {product.description}
-                  </p>
-                  <p className="mb-6">
-                    This beautiful piece showcases the centuries-old traditions of Moroccan craftsmanship, featuring intricate patterns that tell stories of cultural heritage and artistic excellence.
-                  </p>
-                </div>
-
-                <div className="mt-8">
-                  <h3 className="text-lg font-medium text-stone-800 mb-4">Product Specifications</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {Object.entries(productDetails).map(([key, value]) => (
-                      <div key={key} className="flex border-b border-stone-100 py-3">
-                        <span className="w-1/3 text-stone-500 capitalize">{key.replace(/([A-Z])/g, ' $1').trim()}</span>
-                        <span className="w-2/3 text-stone-800">{value}</span>
+            {activeTab === "reviews" && (
+              <div className="max-w-6xl mx-auto">
+                <div className="md:flex gap-8 items-start">
+                  {/* Left sidebar */}
+                  <div className="md:w-1/3 bg-amber-50 p-6 rounded-lg shadow-sm mb-6 md:mb-0">
+                    <h3 className="text-xl font-semibold text-stone-800 mb-4">Write a Review</h3>
+                    <p className="text-stone-600 mb-4">Share your experience with our community!</p>
+                    <textarea
+                      className="w-full p-3 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all"
+                      placeholder="What did you think about our product or service?"
+                      rows="5"
+                      value={reviewText} // Controlled input
+                      onChange={(e) => setReviewText(e.target.value)}
+                    ></textarea>
+                    {/* Review Success Message */}
+                    {reviewSuccessMessage && (
+                      <div className="mb-4 p-3 bg-green-100 text-green-800 rounded-lg">
+                        {reviewSuccessMessage}
                       </div>
-                    ))}
+                    )}
+                    <div className="flex justify-between mt-4">
+                      <button 
+                        className="py-2 px-6 bg-amber-600 text-white rounded-lg font-medium hover:bg-amber-700 transition-colors shadow-sm"
+                        onClick={handleReviewSubmit}
+                      >
+                        Submit
+                      </button>
+                      <button 
+                        className="py-2 px-4 border border-stone-300 text-stone-600 rounded-lg font-medium hover:bg-stone-100 transition-colors"
+                        onClick={() => setReviewText('')}
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Main reviews section */}
+                  <div className="md:w-2/3">
+                    <div className="flex justify-between items-center mb-6">
+                      <h2 className="text-2xl font-semibold text-stone-800">Customer Reviews</h2>
+                      <span className="text-stone-500">({reviews.length} reviews)</span>
+                    </div>
+
+                    {/* Reviews list */}
+                    <div className="space-y-6">
+                      {reviews.length === 0 ? (
+                        <div className="bg-stone-50 p-8 rounded-lg text-center">
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 mx-auto text-stone-400 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                          </svg>
+                          <p className="text-stone-600 mb-4">There are no reviews yet. Be the first to share your experience!</p>
+                          <button className="py-2 px-6 bg-amber-600 text-white rounded-lg font-medium hover:bg-amber-700 transition-colors shadow-sm">
+                            Write a Review
+                          </button>
+                        </div>
+                      ) : (
+                        reviews.map((review) => (
+                          <div key={review._id} className="bg-white p-6 rounded-lg shadow-sm border border-stone-100">
+                            <div className="flex justify-between items-start mb-3">
+                              <div>
+                                <h4 className="font-medium text-stone-800">{review.userId?.name || "Anonymous User"}</h4>
+                                <span className="text-xs text-stone-500">
+                                  {new Date(review.createdAt || new Date()).toLocaleDateString(undefined, {
+                                    year: 'numeric',
+                                    month: 'short',
+                                    day: 'numeric'
+                                  })}
+                                </span>
+                              </div>
+                              <button className="text-stone-400 hover:text-stone-600">
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                  <path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" />
+                                </svg>
+                              </button>
+                            </div>
+                            <p className="text-stone-700">
+                              {review.review || "This product exceeded my expectations! The quality is excellent and the customer service was outstanding."}
+                            </p>
+                          </div>
+                        ))
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
-            )}
-
-            {activeTab === "reviews" && (
-              <div className="max-w-6xl mx-auto">
-  <div className="md:flex gap-8 items-start">
-    {/* Left sidebar */}
-    <div className="md:w-1/3 bg-amber-50 p-6 rounded-lg shadow-sm mb-6 md:mb-0">
-      <h3 className="text-xl font-semibold text-stone-800 mb-4">Write a Review</h3>
-      <p className="text-stone-600 mb-4">Share your experience with our community!</p>
-      <textarea
-        className="w-full p-3 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all"
-        placeholder="What did you think about our product or service?"
-        rows="5"
-        value={reviewText}
-        onChange={(e) => setReviewText(e.target.value)}
-      ></textarea>
-      <div className="flex justify-between mt-4">
-        <button 
-          className="py-2 px-6 bg-amber-600 text-white rounded-lg font-medium hover:bg-amber-700 transition-colors shadow-sm"
-          onClick={handleReviewSubmit}
-        >
-          Submit
-        </button>
-        <button 
-          className="py-2 px-4 border border-stone-300 text-stone-600 rounded-lg font-medium hover:bg-stone-100 transition-colors"
-          onClick={() => setReviewText('')}
-        >
-          Cancel
-        </button>
-      </div>
-    </div>
-
-    {/* Main reviews section */}
-    <div className="md:w-2/3">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-semibold text-stone-800">Customer Reviews</h2>
-        <span className="text-stone-500">({reviews.length} reviews)</span>
-      </div>
-
-      {/* Reviews list */}
-      <div className="space-y-6">
-      {reviews.length === 0 ? (
-  <div className="bg-stone-50 p-8 rounded-lg text-center">
-    <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 mx-auto text-stone-400 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
-    </svg>
-    <p className="text-stone-600 mb-4">There are no reviews yet. Be the first to share your experience!</p>
-    <button className="py-2 px-6 bg-amber-600 text-white rounded-lg font-medium hover:bg-amber-700 transition-colors shadow-sm">
-      Write a Review
-    </button>
-  </div>
-) : (
-  reviews.map((review) => (
-    <div key={review._id} className="bg-white p-6 rounded-lg shadow-sm border border-stone-100">
-      <div className="flex justify-between items-start mb-3">
-        <div>
-          {/* Access the user's name from the populated userId field */}
-          <h4 className="font-medium text-stone-800">{review.userId?.name || "Anonymous User"}</h4>
-          <span className="text-xs text-stone-500">
-            {new Date(review.createdAt || new Date()).toLocaleDateString(undefined, {
-              year: 'numeric',
-              month: 'short',
-              day: 'numeric'
-            })}
-          </span>
-        </div>
-        <button className="text-stone-400 hover:text-stone-600">
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-            <path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" />
-          </svg>
-        </button>
-      </div>
-      <p className="text-stone-700">
-        {review.review || "This product exceeded my expectations! The quality is excellent and the customer service was outstanding."}
-      </p>
-    </div>
-  ))
-)}
-      </div>
-
-      {/* Pagination */}
-      {reviews.length > 0 && (
-        <div className="mt-8 flex justify-center">
-          <nav className="inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
-            <button className="px-2 py-2 rounded-l-md border border-stone-300 bg-white text-stone-500 hover:bg-stone-50">
-              <span className="sr-only">Previous</span>
-              <svg className="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                <path fillRule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clipRule="evenodd" />
-              </svg>
-            </button>
-            <button className="px-4 py-2 border border-amber-500 bg-amber-50 text-amber-600 hover:bg-amber-100">1</button>
-            <button className="px-4 py-2 border border-stone-300 bg-white text-stone-500 hover:bg-stone-50">2</button>
-            <button className="px-4 py-2 border border-stone-300 bg-white text-stone-500 hover:bg-stone-50">3</button>
-            <button className="px-2 py-2 rounded-r-md border border-stone-300 bg-white text-stone-500 hover:bg-stone-50">
-              <span className="sr-only">Next</span>
-              <svg className="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
-              </svg>
-            </button>
-          </nav>
-        </div>
-      )}
-    </div>
-  </div>
-</div>
             )}
           </div>
         </div>
