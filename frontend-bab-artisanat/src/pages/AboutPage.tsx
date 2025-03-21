@@ -2,6 +2,10 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import headerImage from "../assets/Zelij1.png";
 import Artisans from "../assets/Artisans.png";
+import Omar from "../assets/Omar.png";
+import Laila from "../assets/Laila.png";
+import Nadia from "../assets/Nadia.png";
+import Showroom from "../assets/Showroom.png";
 import { MapPin, Mail, Phone } from "lucide-react";
 
 const AboutPage = () => {
@@ -11,21 +15,20 @@ const AboutPage = () => {
       name: "Laila Bennani",
       position: "Founder & CEO",
       bio: "With a passion for Moroccan heritage and 15 years in the artisanal sector, Laila established this platform to connect skilled artisans with global customers.",
-      image: "/api/placeholder/300/300"
+      image: Laila
     },
     {
       id: 2,
       name: "Omar Alaoui",
       position: "Chief Curator",
       bio: "Omar travels across Morocco to discover exceptional artisans and their unique creations, ensuring our collection represents the finest of Moroccan craftsmanship.",
-      image: "/api/placeholder/300/300"
-    },
+      image: Omar    },
     {
       id: 3,
       name: "Nadia El Fassi",
       position: "Artisan Relations",
       bio: "Coming from a family of artisans herself, Nadia builds meaningful relationships with our creator community, providing them with the support they need to thrive.",
-      image: "/api/placeholder/300/300"
+      image: Nadia
     }
   ]);
 
@@ -225,7 +228,7 @@ const AboutPage = () => {
                   <img 
                     src={member.image} 
                     alt={member.name} 
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover object-top"
                   />
                 </div>
                 <div className="p-6">
@@ -322,7 +325,7 @@ const AboutPage = () => {
             <div className="lg:w-1/2">
               <div className="aspect-square rounded-lg overflow-hidden shadow-lg">
                 <img 
-                  src="/api/placeholder/600/600" 
+                  src={Showroom} 
                   alt="Our Marrakech showroom" 
                   className="w-full h-full object-cover"
                 />
