@@ -64,7 +64,6 @@ const AddProduct = () => {
             setError("Erreur lors de l'upload de l'image. Veuillez réessayer.");
         }
     };
-zzzzzzzz
     const removeImage = (index) => {
         setPreviewImages(prev => prev.filter((_, i) => i !== index));
         setFormData(prevState => ({

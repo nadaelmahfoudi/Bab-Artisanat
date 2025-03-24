@@ -25,4 +25,8 @@ export class NotificationService {
   async markAsRead(notificationId: string) {
     return await this.notificationModel.findByIdAndUpdate(notificationId, { read: true }, { new: true });
   }
+
+  async deleteNotification(notificationId: string) {
+    return await this.notificationModel.findByIdAndDelete(notificationId);
+  }
 }
