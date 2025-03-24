@@ -5,7 +5,6 @@ import Footer from "./components/Footer";
 import Cart from "./components/Cart";
 import LoginPage from "./pages/Login"; 
 import RegisterPage from "./pages/Register"; 
-import DashboardPage from "./pages/DashboardPage";
 import ListProduct from "./pages/products/listProduct";
 import AddProduct from "./pages/products/addProduct";
 import EditProduct from "./pages/products/editProduct"; 
@@ -29,7 +28,6 @@ export default function App() {
         <Route path="/about" element={<AboutPage />} />
         <Route path="/products" element={<ProductPage />} />
         <Route path="/register" element={<RegisterPage />} />
-        <Route path="/dashboard" element={<DashboardPage />} />
         <Route path="/products/list" element={<ListProduct />} />
         <Route path="/addProduct" element={<AddProduct />} />
         <Route path="/notification" element={<NotificationPage />} />

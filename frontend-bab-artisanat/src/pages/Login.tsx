@@ -23,7 +23,7 @@ const Login = () => {
       if (response.data.token && response.data.userId) {
         localStorage.setItem("token", response.data.token);
         localStorage.setItem("userId", response.data.userId); // Store userId
-        navigate("/dashboard");
+        navigate("/products/list");
       } else {
         throw new Error("Invalid response from server");
       }
