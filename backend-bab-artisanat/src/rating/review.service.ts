@@ -24,4 +24,8 @@ export class ReviewService {
       .populate('userId', 'name') // Récupère uniquement le champ 'name' de l'utilisateur
       .exec();
   }
+
+  async deleteReview(id: string) {
+    return this.reviewModel.findByIdAndDelete(id).exec();
+  }
 }
