@@ -13,10 +13,13 @@ export class User extends Document {
   password: string;
 
   @Prop()
-  phone: string; 
+  phone: string;
 
   @Prop()
-  localisation: string; 
+  localisation: string;
+
+  @Prop({ default: 'client' }) 
+  role: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

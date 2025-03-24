@@ -6,31 +6,36 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
+  const [role, setRole] = useState<string | null>(null); 
   const navigate = useNavigate();
 
   useEffect(() => {
     const token = localStorage.getItem("token");
     const storedUserId = localStorage.getItem("userId");
+    const storedRole = localStorage.getItem("role");
+
+    console.log(storedRole); 
 
     setIsLoggedIn(!!token);
     setUserId(storedUserId);
-  }, []);
+    setRole(storedRole);
+  }, [localStorage.getItem("token"), localStorage.getItem("role")]); 
 
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("userId");
+    localStorage.removeItem("role"); 
     setIsLoggedIn(false);
     setUserId(null);
+    setRole(null); 
     navigate("/");
   };
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
-    // Prevent scrolling when menu is open
     document.body.style.overflow = isOpen ? "auto" : "hidden";
   };
 
-  // Close mobile menu when navigating
   const closeMenu = () => {
     if (isOpen) {
       setIsOpen(false);
@@ -57,12 +62,19 @@ const Navbar = () => {
             <Link to="/products" className="text-stone-700 hover:text-amber-800 dark:text-amber-100 dark:hover:text-amber-400 transition-colors">
               Products
             </Link>
-            <Link to="/artisans" className="text-stone-700 hover:text-amber-800 dark:text-amber-100 dark:hover:text-amber-400 transition-colors">
-              Artisans
-            </Link>
-            <Link to="/boutique" className="py-2 border-b border-stone-200 dark:border-stone-700" onClick={closeMenu}>
-              Boutique
-            </Link>
+
+            {/* Conditionally render "Boutique" and "Dashboard" only if user is "artisan" */}
+            {role === "artisan" && (
+              <>
+                <Link to="/boutique" className="py-2 border-b border-stone-200 dark:border-stone-700" onClick={closeMenu}>
+                  Boutique
+                </Link>
+                <Link to="/products/list" className="text-sm font-medium text-stone-700 hover:text-amber-800 dark:text-amber-100 dark:hover:text-amber-400 transition-colors">
+                  Dashboard
+                </Link>
+              </>
+            )}
+
             <Link to="/about" className="text-stone-700 hover:text-amber-800 dark:text-amber-100 dark:hover:text-amber-400 transition-colors">
               About
             </Link>
@@ -80,9 +92,6 @@ const Navbar = () => {
                 </Link>
                 <div className="hidden md:block">
                   <div className="flex items-center space-x-3">
-                    <Link to="/products/list" className="text-sm font-medium text-stone-700 hover:text-amber-800 dark:text-amber-100 dark:hover:text-amber-400 transition-colors">
-                      Dashboard
-                    </Link>
                     <button
                       onClick={handleLogout}
                       className="text-sm font-medium px-4 py-2 rounded-md bg-amber-600 text-white hover:bg-amber-700 transition-colors"
@@ -125,34 +134,34 @@ const Navbar = () => {
             <Link to="/products" className="py-2 border-b border-stone-200 dark:border-stone-700" onClick={closeMenu}>
               Products
             </Link>
-            <Link to="/artisans" className="py-2 border-b border-stone-200 dark:border-stone-700" onClick={closeMenu}>
-              Artisans
-            </Link>
-            <Link to="/boutique" className="py-2 border-b border-stone-200 dark:border-stone-700" onClick={closeMenu}>
-              Boutique
-            </Link>
+
+            {/* Conditionally render "Boutique" and "Dashboard" only if user is "artisan" */}
+            {role === "artisan" && (
+              <>
+                <Link to="/boutique" className="py-2 border-b border-stone-200 dark:border-stone-700" onClick={closeMenu}>
+                  Boutique
+                </Link>
+                <Link to="/products/list" className="py-2 border-b border-stone-200 dark:border-stone-700" onClick={closeMenu}>
+                  Dashboard
+                </Link>
+              </>
+            )}
+
             <Link to="/about" className="py-2 border-b border-stone-200 dark:border-stone-700" onClick={closeMenu}>
               About
             </Link>
 
             {isLoggedIn ? (
               <div className="flex flex-col space-y-4 pt-6">
-                <Link 
-                  to="/products/list" 
-                  className="w-full py-3 text-center rounded-md border border-amber-600 text-amber-600 hover:bg-amber-50 dark:hover:bg-stone-800"
-                  onClick={closeMenu}
-                >
-                  Dashboard
-                </Link>
-                <Link 
-                  to="/wishlist" 
+                <Link
+                  to="/wishlist"
                   className="w-full py-3 text-center rounded-md border border-amber-600 text-amber-600 hover:bg-amber-50 dark:hover:bg-stone-800"
                   onClick={closeMenu}
                 >
                   Wishlist
                 </Link>
-                <Link 
-                  to="/cart" 
+                <Link
+                  to="/cart"
                   className="w-full py-3 text-center rounded-md border border-amber-600 text-amber-600 hover:bg-amber-50 dark:hover:bg-stone-800"
                   onClick={closeMenu}
                 >
@@ -170,15 +179,15 @@ const Navbar = () => {
               </div>
             ) : (
               <div className="flex flex-col space-y-4 pt-6">
-                <Link 
-                  to="/login" 
+                <Link
+                  to="/login"
                   className="w-full py-3 text-center rounded-md border border-amber-600 text-amber-600 hover:bg-amber-50 dark:hover:bg-stone-800"
                   onClick={closeMenu}
                 >
                   Login
                 </Link>
-                <Link 
-                  to="/register" 
+                <Link
+                  to="/register"
                   className="w-full py-3 text-center rounded-md bg-amber-600 text-white hover:bg-amber-700"
                   onClick={closeMenu}
                 >

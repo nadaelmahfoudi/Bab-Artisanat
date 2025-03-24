@@ -18,12 +18,13 @@ const Login = () => {
     setError(null);
 
     try {
-      const response = await axios.post("http://local/auth/host:3000login", formData);
+      const response = await axios.post("http://localhost:3000/auth/login", formData);
 
-      if (response.data.token && response.data.userId) {
+      if (response.data.token && response.data.userId && response.data.role) {
         localStorage.setItem("token", response.data.token);
-        localStorage.setItem("userId", response.data.userId); // Store userId
-        navigate("/products/list");
+        localStorage.setItem("userId", response.data.userId); 
+        localStorage.setItem("role", response.data.role);
+        navigate("/");
       } else {
         throw new Error("Invalid response from server");
       }
