@@ -9,10 +9,10 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('register')
-  async register(@Body() body: { name: string; email: string; password: string }) {
+  async register(@Body() body: { name: string; email: string; password: string; role?: string }) {
     try {
-      const { name, email, password } = body;
-      const result = await this.authService.register(name, email, password);
+      const { name, email, password, role } = body;
+      const result = await this.authService.register(name, email, password, role);  // Pass the role here
       return { message: 'User registered successfully', token: result.token };
     } catch (error) {
       throw new BadRequestException(error.message);
@@ -27,20 +27,6 @@ export class AuthController {
   }
   
 
-    // Request password reset
-    @Post('request-password-reset')
-    async requestPasswordReset(@Body('email') email: string): Promise<void> {
-      return this.authService.requestPasswordReset(email);
-    }
-  
-    // Reset password
-    @Post('reset-password/:token')
-    async resetPassword(
-      @Param('token') token: string,
-      @Body('newPassword') newPassword: string,
-    ): Promise<void> {
-      return this.authService.resetPassword(token, newPassword);
-    }
 
     @Get(':userId')
     async getUserById(@Param('userId') userId: string) {

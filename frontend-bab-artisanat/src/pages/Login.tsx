@@ -18,7 +18,7 @@ const Login = () => {
     setError(null);
 
     try {
-      const response = await axios.post("http://local/auth/host:3000login", formData);
+      const response = await axios.post("http://localhost:3000/auth/login", formData);
 
       if (response.data.token && response.data.userId) {
         localStorage.setItem("token", response.data.token);
