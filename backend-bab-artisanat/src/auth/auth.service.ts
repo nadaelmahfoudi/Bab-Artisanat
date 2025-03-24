@@ -33,7 +33,7 @@ export class AuthService {
   }
   
 
-  async login(email: string, password: string): Promise<{ token: string, userId: string }> {
+  async login(email: string, password: string): Promise<{ token: string, userId: string, role: string }> {
     const user = await this.userModel.findOne({ email });
     if (!user) {
       throw new UnauthorizedException('Invalid email or password');
@@ -44,10 +44,10 @@ export class AuthService {
       throw new UnauthorizedException('Invalid email or password');
     }
   
-    const payload = { sub: user._id, email: user.email };
+    const payload = { sub: user._id, email: user.email, role: user.role };
     const token = this.jwtService.sign(payload);
   
-    return { token, userId: user._id.toString() };  
+    return { token, userId: user._id.toString(), role: user.role };  
   }
   
 
