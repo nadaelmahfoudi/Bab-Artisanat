@@ -80,7 +80,7 @@ const Navbar = () => {
                 </Link>
                 <div className="hidden md:block">
                   <div className="flex items-center space-x-3">
-                    <Link to="/dashboard" className="text-sm font-medium text-stone-700 hover:text-amber-800 dark:text-amber-100 dark:hover:text-amber-400 transition-colors">
+                    <Link to="/products/list" className="text-sm font-medium text-stone-700 hover:text-amber-800 dark:text-amber-100 dark:hover:text-amber-400 transition-colors">
                       Dashboard
                     </Link>
                     <button
@@ -138,7 +138,7 @@ const Navbar = () => {
             {isLoggedIn ? (
               <div className="flex flex-col space-y-4 pt-6">
                 <Link 
-                  to="/dashboard" 
+                  to="/products/list" 
                   className="w-full py-3 text-center rounded-md border border-amber-600 text-amber-600 hover:bg-amber-50 dark:hover:bg-stone-800"
                   onClick={closeMenu}
                 >

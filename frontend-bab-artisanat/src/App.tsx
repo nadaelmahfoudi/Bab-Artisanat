@@ -5,7 +5,6 @@ import Footer from "./components/Footer";
 import Cart from "./components/Cart";
 import LoginPage from "./pages/Login"; 
 import RegisterPage from "./pages/Register"; 
-import DashboardPage from "./pages/DashboardPage";
 import ListProduct from "./pages/products/listProduct";
 import AddProduct from "./pages/products/addProduct";
 import EditProduct from "./pages/products/editProduct"; 
@@ -17,6 +16,7 @@ import AboutPage from "./pages/AboutPage";
 import ProductPage from "./pages/ProductPage";
 import BoutiquePage from "./pages/BoutiquePage";
 import NotificationPage from "./pages/NotificationPage";
+import ReviewPage from "./pages/ReviewPage";
 
 export default function App() {
   return (
@@ -28,10 +28,10 @@ export default function App() {
         <Route path="/about" element={<AboutPage />} />
         <Route path="/products" element={<ProductPage />} />
         <Route path="/register" element={<RegisterPage />} />
-        <Route path="/dashboard" element={<DashboardPage />} />
         <Route path="/products/list" element={<ListProduct />} />
         <Route path="/addProduct" element={<AddProduct />} />
         <Route path="/notification" element={<NotificationPage />} />
+        <Route path="/review" element={<ReviewPage />} />
         <Route path="/products/edit/:id" element={<EditProduct />} />
         <Route path="/categories/list" element={<ListCategory />} />
         <Route path="/product/:id" element={<ProductDetail />} />

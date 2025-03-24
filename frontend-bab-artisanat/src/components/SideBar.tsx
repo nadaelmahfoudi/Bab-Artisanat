@@ -38,7 +38,7 @@ const Sidebar = () => {
       icon: <FaBell />,
       badge: unreadCount > 0 ? unreadCount : null
     },
-    { path: "/users", label: "Users", icon: <FaUsers /> }
+    { path: "/review", label: "Reviews", icon: <FaUsers /> }
   ];
 
   return (
