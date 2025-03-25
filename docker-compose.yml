@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  # Backend Service
+  backend:
+    build: 
+      context: ./backend-bab-artisanat
+      dockerfile: Dockerfile
+    container_name: backend-bab-artisanat
+    ports:
+      - "3000:3000"
+    environment:
+      - MONGODB_URI=mongodb://mongo:27017/Bab-Artisanat
+      - NODE_ENV=./backend-bab-artisanat/.env
+    depends_on:
+      - mongo
+    volumes:
+      - ./backend-bab-artisanat:/app
+      - /app/node_modules
+
+  # Frontend Service  
+  frontend:
+    build:
+      context: ./frontend-bab-artisanat
+      dockerfile: Dockerfile
+    container_name: frontend-bab-artisanat
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+    volumes:
+      - ./frontend-bab-artisanat:/app
+      - /app/node_modules
+
+  # MongoDB Service
+  mongo:
+    image: mongo:latest
+    volumes:
+      - mongo-data:/data/db
+    ports:
+      - "27017:27017"
+    restart: unless-stopped
+
+volumes:
+  mongo-data:
+
+networks:
+  default:
+    name: bab-artisanat-network
