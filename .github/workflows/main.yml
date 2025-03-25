@@ -49,3 +49,4 @@ jobs:
         run: |
           docker build --no-cache -t nadaelmahfoudi/bab_artisanat_frontend:latest ./frontend-bab-artisanat
           docker push nadaelmahfoudi/bab_artisanat_frontend:latest
+          
