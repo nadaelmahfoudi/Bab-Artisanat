@@ -2,9 +2,9 @@ name: main
 
 on:
   push:
-    branches: ['devlop']
+    branches: ['develop']
   pull_request:
-    branches: ['devlop']
+    branches: ['develop']
 
 jobs:
   build-and-test:
@@ -49,4 +49,3 @@ jobs:
         run: |
           docker build --no-cache -t nadaelmahfoudi/bab_artisanat_frontend:latest ./frontend-bab-artisanat
           docker push nadaelmahfoudi/bab_artisanat_frontend:latest
-          
