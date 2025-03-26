@@ -7,20 +7,14 @@ const Sidebar = () => {
   const [collapsed, setCollapsed] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
   
-  // Check for unread notifications in localStorage
   useEffect(() => {
     const checkUnreadNotifications = () => {
       const count = localStorage.getItem('unreadNotifications');
       setUnreadCount(count ? parseInt(count) : 0);
     };
     
-    // Check on mount
     checkUnreadNotifications();
-    
-    // Set up an interval to check regularly
     const intervalId = setInterval(checkUnreadNotifications, 3000);
-    
-    // Clean up interval
     return () => clearInterval(intervalId);
   }, []);
 

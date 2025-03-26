@@ -130,7 +130,6 @@ export class CartService {
   }
 
   async createCheckoutSession(userId: string) {
-    // Vérifier si userId est valide
     if (!ObjectId.isValid(userId)) {
       console.error("❌ Invalid userId:", userId);
       throw new Error("Invalid userId");
@@ -180,7 +179,6 @@ export class CartService {
       cancel_url: "http://localhost:5173/cart", 
     });
   
-    // Send notification to each product owner
     for (const item of cart.items) {
       const product = item.productId as any;
       if (product?.userId) {

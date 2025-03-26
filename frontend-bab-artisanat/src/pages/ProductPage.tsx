@@ -10,7 +10,7 @@ interface Product {
   description?: string;
   stock: number;
   images: string[];
-  category: { _id: string; name: string }; // Updated to include category details
+  category: { _id: string; name: string }; 
 }
 
 interface CartItem {
@@ -22,7 +22,7 @@ interface FilterOptions {
   minPrice: number;
   maxPrice: number;
   inStock: boolean;
-  categories: string[]; // Added categories to filter options
+  categories: string[]; 
 }
 
 const ProductPage: React.FC = () => {
@@ -41,7 +41,7 @@ const ProductPage: React.FC = () => {
     minPrice: 0,
     maxPrice: 1000,
     inStock: false,
-    categories: [], // Initialize categories filter
+    categories: [], 
   });
 
   const navigate = useNavigate();

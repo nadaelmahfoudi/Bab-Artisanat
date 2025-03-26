@@ -1,6 +1,6 @@
 import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
-import { User } from './user.schema'; // Ensure this import exists
+import { User } from './user.schema'; 
 
 @Schema({ timestamps: true })
 export class Notification extends Document {

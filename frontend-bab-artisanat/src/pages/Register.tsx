@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios"; // Import Axios
+import axios from "axios";
 import registerImage from "../assets/SignZelij.png";
 import doorImage from "../assets/Door.png";
 

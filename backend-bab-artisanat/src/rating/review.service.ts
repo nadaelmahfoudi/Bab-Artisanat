@@ -21,7 +21,7 @@ export class ReviewService {
   async getReviewsByProduct(productId: string) {
     return this.reviewModel
       .find({ productId })
-      .populate('userId', 'name') // Récupère uniquement le champ 'name' de l'utilisateur
+      .populate('userId', 'name')
       .exec();
   }
 

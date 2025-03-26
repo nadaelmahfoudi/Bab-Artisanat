@@ -10,7 +10,7 @@ interface Product {
   stock: number;
   images: string[];
   category?: string;
-  createdAt?: string; // Added for sorting by latest
+  createdAt?: string; 
 }
 
 interface CartItem {

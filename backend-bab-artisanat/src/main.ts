@@ -5,8 +5,6 @@ import { join } from 'path';
 
 async function bootstrap() {
     const app = await NestFactory.create<NestExpressApplication>(AppModule);
-
-    // Rendre le dossier uploads accessible publiquement
     app.useStaticAssets(join(__dirname, '..', 'uploads'), { prefix: '/uploads' });
 
     app.enableCors({

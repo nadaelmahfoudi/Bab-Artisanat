@@ -15,5 +15,5 @@ COPY . .
 # Expose the backend port
 EXPOSE 3000
 
-# Use the correct start command
+# Use the start command
 CMD ["npm", "start"]

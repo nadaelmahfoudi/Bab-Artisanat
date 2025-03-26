@@ -12,7 +12,7 @@ export class AuthController {
   async register(@Body() body: { name: string; email: string; password: string; role?: string }) {
     try {
       const { name, email, password, role } = body;
-      const result = await this.authService.register(name, email, password, role);  // Pass the role here
+      const result = await this.authService.register(name, email, password, role);  
       return { message: 'User registered successfully', token: result.token };
     } catch (error) {
       throw new BadRequestException(error.message);

@@ -78,8 +78,6 @@ const ReviewPage: React.FC = () => {
 
     try {
       await axios.delete(`http://localhost:3000/reviews/${reviewToDelete}`);
-      
-      // Update the products state to remove the deleted review
       setProducts(prevProducts =>
         prevProducts.map(product => {
           if (product._id === currentProductId) {

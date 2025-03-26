@@ -15,5 +15,5 @@ COPY . .
 # Expose the frontend port
 EXPOSE 5173
 
-# Use the correct start command
+# Use the start command
 CMD ["npm", "run", "dev"]

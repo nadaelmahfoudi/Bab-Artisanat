@@ -112,12 +112,12 @@ const HomePage = () => {
             {categories.map((category) => (
               <Link 
                 key={category.id}
-                to={`/category/${category.id}`}
+                to={`/`}
                 className="bg-amber-50 hover:bg-amber-100 border border-amber-200 rounded-lg p-6 text-center transition-all duration-300 flex flex-col items-center"
               >
-                <span className="text-4xl mb-3">{category.icon}</span>
+                <span className="text-4xl mb-3">{}</span>
                 <h3 className="font-medium text-stone-800 mb-1">{category.name}</h3>
-                <p className="text-sm text-stone-500">{category.count} items</p>
+                <p className="text-sm text-stone-500">{} items</p>
               </Link>
             ))}
           </div>
